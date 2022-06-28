@@ -11,7 +11,7 @@ services:
       - FLASK_APP=wsgi.py
       - FLASK_RUN_HOST=0.0.0.0
       - FLASK_RUN_PORT=5050
-    container_name: administracija_app_development
+    container_name: administration_app_development
     ports:
       - 5050:5050
     command: "python -u -m flask run"
