@@ -6,15 +6,14 @@ from flask_apispec import FlaskApiSpec
 from . import cli
 from .controller import bpp
 from .db import db, migrate
-from .general.exception import CustomLogException, \
+from .general import build_error_response, CustomLogException, \
     DefaultAppException, AppLogException
-from .general.api_exception import build_error_response
 from .models import *  # This one is important for Alembic auto generated migrations to work
 from .settings import environments
 import warnings
 from werkzeug.exceptions import default_exceptions
 
-#add every controller
+from src.controller import category_controller
 
 def marshmallow_swagger_properties(self, field, **kwargs):
     """
@@ -22,7 +21,7 @@ def marshmallow_swagger_properties(self, field, **kwargs):
     """
     from marshmallow.fields import DateTime, Date, Time
     import marshmallow_enum
-    from src.views.hellper import Hellper
+    from src.views import Hellper
     import arrow
 
     if isinstance(field, marshmallow_enum.EnumField):
@@ -48,7 +47,7 @@ def marshmallow_swagger_properties(self, field, **kwargs):
 
 def create_app(config_environment):
     app = Flask(
-        'App core',
+        'Administration app',
         static_folder='./static',
         template_folder='./templates'
     )
@@ -56,7 +55,7 @@ def create_app(config_environment):
     marshmallow_plugin = MarshmallowPlugin()
     app.config.update({
         'APISPEC_SPEC': APISpec(
-            title='App core',
+            title='Administration app',
             version='v1',
             openapi_version='2.0',
             plugins=[marshmallow_plugin]

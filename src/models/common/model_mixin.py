@@ -2,7 +2,7 @@ from sqlalchemy_utils.types.arrow import arrow
 from ... import db
 
 
-class ModelMixin:
+class ModelsMixin:
 
     @staticmethod
     def commit_or_rollback():

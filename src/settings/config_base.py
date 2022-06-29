@@ -26,7 +26,7 @@ class ContextFilter(logging.Filter):
 
 
 class ConfigBase:
-    APPLICATION_NAME = 'App core'
+    APPLICATION_NAME = 'Administration app'
 
     # --------------------------------------------------------------------------
     # Application directories
