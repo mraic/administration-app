@@ -8,6 +8,7 @@ from ..models.common import BaseQueryMixin
 import sqlalchemy as sa
 from sqlalchemy.dialects.postgresql import UUID
 
+
 class SubcategoryQuery(BaseQueryMixin, db.Query):
     pass
 
@@ -15,6 +16,7 @@ class SubcategoryQuery(BaseQueryMixin, db.Query):
 class SubcategoryStatus(enum.Enum):
     inactive = 0
     active = 1
+
 
 class SubcategoryState(enum.Enum):
     inactive = 'inactive'
@@ -28,14 +30,13 @@ class Subcategory(BaseModelMixin, ModelsMixin, db.Model):
     STATUSES = SubcategoryStatus
     STATE = SubcategoryState
 
-
     id = sa.Column(UUID(as_uuid=True), default=uuid4, primary_key=True)
     name = sa.Column(sa.String(length=255), nullable=False)
     subcategory_icon = sa.Column(sa.String(length=255), nullable=False)
     state = sa.Column(
         sa.Enum(
             SubcategoryState,
-            name = "ck_subcategory_states",
+            name="ck_subcategory_states",
             native_enum=False,
             create_constraint=True,
             length=255,
@@ -52,7 +53,7 @@ class Subcategory(BaseModelMixin, ModelsMixin, db.Model):
             native_enum=False,
             create_constraint=True,
             length=255,
-            validate_strings = True,
+            validate_strings=True,
         ),
         nullable=False,
         default=SubcategoryStatus.active,
@@ -69,4 +70,4 @@ class Subcategory(BaseModelMixin, ModelsMixin, db.Model):
                                 uselist=False)
 
     item = orm.relationship("Item",
-                             back_populates="subcategory")
+                            back_populates="subcategory")

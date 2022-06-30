@@ -18,4 +18,3 @@ class AppLogException(Exception):
         self.config_log_category_name = config_log_category_name \
             if config_log_category_name is not None \
             else 'DEFAULT_APP_LOG_CATEGORY'
-

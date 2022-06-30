@@ -1,10 +1,12 @@
 import sys
 import flask
 
-def is_dev_machine() -> bool:
-    return flask.current_app.config["ENV"] in ["test","development"]
 
-def confirm_if_not_dev(operation: str, exit_immediately = True):
+def is_dev_machine() -> bool:
+    return flask.current_app.config["ENV"] in ["test", "development"]
+
+
+def confirm_if_not_dev(operation: str, exit_immediately=True):
     if not is_dev_machine():
         recieved = input(
             "Looks like you are *NOT* on development machine! Please type "

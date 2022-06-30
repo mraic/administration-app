@@ -1,10 +1,10 @@
 import click
 from flask.cli import with_appcontext
 
+
 @click.group(
     name="db_migrations",
 )
-
 def db_migrations():
     pass
 

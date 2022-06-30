@@ -1,8 +1,8 @@
 """-m
 
-Revision ID: 91a64254f49c
+Revision ID: d10fb2bab49a
 Revises: 
-Create Date: 2022-06-29 13:05:28.497737
+Create Date: 2022-06-30 13:03:50.016905
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision = '91a64254f49c'
+revision = 'd10fb2bab49a'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -46,6 +46,7 @@ def upgrade():
     sa.Column('name', sa.String(length=255), nullable=False),
     sa.Column('description', sa.Text(), nullable=False),
     sa.Column('price', sa.Float(), nullable=True),
+    sa.Column('condition', sa.String(length=255), nullable=False),
     sa.Column('state', sa.Enum('active', 'inactive', name='ck_items_states', native_enum=False, create_constraint=True, length=255), server_default='active', nullable=False),
     sa.Column('status', sa.Enum('active', 'inactive', name='ck_items_status', native_enum=False, create_constraint=True, length=255), server_default='active', nullable=False),
     sa.Column('subcategory_id', postgresql.UUID(as_uuid=True), nullable=False),

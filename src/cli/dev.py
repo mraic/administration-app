@@ -68,4 +68,3 @@ def dev_db_create_postgis_extension():
     db = flask.current_app.extensions["sqlalchemy"].db
     sql = text('CREATE EXTENSION postgis')
     db.engine.execute(sql)
-

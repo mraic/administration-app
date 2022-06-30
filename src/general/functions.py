@@ -4,9 +4,9 @@ from urllib.error import HTTPError
 from flask import current_app
 from sqlalchemy import and_
 
+
 def filter_data_result_with_operator(filter_name=None, attribute=None,
                                      filter_data=None):
-
     filter_main = and_()
     if all(v is not None for v in [attribute, filter_name, filter_data]):
         if check_filter_data(filter_name, filter_data):
@@ -14,13 +14,14 @@ def filter_data_result_with_operator(filter_name=None, attribute=None,
             operator = filter_data[filter_name]['operator']
             if value:
                 filter_main = and_(
-                filter_main,
-                attribute.ilike(check_like_filter_operator(
-                    operator, value
-                )))
+                    filter_main,
+                    attribute.ilike(check_like_filter_operator(
+                        operator, value
+                    )))
     else:
         pass
     return filter_main
+
 
 def filter_data_result_between_two_value(
         filter_name=None, filter_date_from=None, filter_date_to=None,
@@ -37,7 +38,7 @@ def filter_data_result_between_two_value(
             if filter_date_from in filter_data[filter_name]:
                 if filter_date_to in filter_data[filter_name]:
                     date_from = filter_data[filter_name][filter_date_from] if \
-                        filter_data[filter_name][filter_date_from] != ''\
+                        filter_data[filter_name][filter_date_from] != '' \
                         else None
                     date_to = filter_data[filter_name][filter_date_to] if \
                         filter_data[filter_name][filter_date_to] != '' else None
@@ -56,8 +57,8 @@ def filter_data_result_between_two_value(
                             pass
                         else:
                             filter_main = and_(
-                            filter_main,
-                            attribute >= date_from)
+                                filter_main,
+                                attribute >= date_from)
 
                     else:
                         filter_main = and_(
@@ -79,6 +80,7 @@ def filter_data_result_between_two_value(
         )
     return filter_main
 
+
 def check_filter_data(key, filter_data):
     if filter_data is not None:
         if key in filter_data:
@@ -86,6 +88,7 @@ def check_filter_data(key, filter_data):
                 if 'operator' in filter_data[key]:
                     return True
     return False
+
 
 def check_like_filter_operator(operator, value):
     if operator == 'START':
@@ -96,4 +99,3 @@ def check_like_filter_operator(operator, value):
         return value
     elif operator == 'FINISH':
         return '%' + value
-

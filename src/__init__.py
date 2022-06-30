@@ -15,6 +15,7 @@ from werkzeug.exceptions import default_exceptions
 
 from src.controller import category_controller
 
+
 def marshmallow_swagger_properties(self, field, **kwargs):
     """
     Add an OpenAPI extension for marshmallow instances

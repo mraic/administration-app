@@ -9,11 +9,11 @@ from sqlalchemy.dialects.postgresql import insert as pg_insert
 class GetOrCreateMixin:
     @classmethod
     def get_or_create(
-        cls,
-        create_params: dict = None,
-        index_elements=None,
-        index_where=None,
-        **search_by_params
+            cls,
+            create_params: dict = None,
+            index_elements=None,
+            index_where=None,
+            **search_by_params
     ):
         """
         Implements 'insert or create' behavior for SQLAlchemy using PostgreSQL UPSERT
@@ -82,11 +82,11 @@ class GetOrCreateMixin:
 
     @classmethod
     def get_or_create_only_id(
-        cls,
-        create_params: dict = None,
-        index_elements=None,
-        index_where=None,
-        **search_by_params
+            cls,
+            create_params: dict = None,
+            index_elements=None,
+            index_where=None,
+            **search_by_params
     ):
         """
         Same as ``get_or_create`` but instead of returning whole ORM instance, it only
@@ -115,7 +115,8 @@ class GetOrCreateMixin:
         return cls.query.session.execute(statement).scalar_one()
 
     @classmethod
-    def get_or_create_no_index(cls, create_params: dict = None, **search_by_params):
+    def get_or_create_no_index(cls, create_params: dict = None,
+                               **search_by_params):
         """
         Same as `get_or_create` but much slower since it in worst case requires
         multiple roundtrips to db.
@@ -145,7 +146,8 @@ class GetOrCreateMixin:
             except sa.exc.IntegrityError as e:
                 db.session.rollback()
                 if "duplicate key value violates unique constraint" in str(e):
-                    retv = db.session.query(cls).filter_by(**search_by_params).one()
+                    retv = db.session.query(cls).filter_by(
+                        **search_by_params).one()
                     for k, v in create_params.items():
                         setattr(retv, k, v)
                 else:

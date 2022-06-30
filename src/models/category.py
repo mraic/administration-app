@@ -18,23 +18,49 @@ class CategoryQuery(BaseModelMixin, db.Query):
             db.session.rollback()
             raise e
 
+    def get_one_by_id(self, _id):
+        try:
+            return self.filter(
+                Category.id == _id
+            ).first()
+        except Exception as e:
+            db.session.rollback()
+            raise e
+
+    @staticmethod
+    def get_all_users(filter_data, start, length):
+        try:
+            return db.session.query(
+                Category
+            ).filter(
+                filter_data,
+                Category.status == Category.STATUSES.active
+            ).paginate(
+                page=start, per_page=length, error_out=False, max_per_page=50
+            )
+        except Exception as e:
+            db.session.rollback()
+            raise e
+
+
 class CategoryStatus(enum.Enum):
     inactive = 0
     active = 1
+
 
 class CategoryState(enum.Enum):
     active = 'active'
     inactive = 'inactive'
 
-class Category(BaseModelMixin, ModelsMixin, db.Model):
 
+class Category(BaseModelMixin, ModelsMixin, db.Model):
     __tablename__ = "categories"
     query_class = CategoryQuery
 
     STATUSES = CategoryStatus
     STATES = CategoryState
 
-    id = sa.Column(UUID(as_uuid=True), default=uuid4, primary_key = True)
+    id = sa.Column(UUID(as_uuid=True), default=uuid4, primary_key=True)
     name = sa.Column(sa.String(length=255), nullable=False)
     category_icon = sa.Column(sa.String(length=255), nullable=False)
     state = sa.Column(
@@ -65,4 +91,4 @@ class Category(BaseModelMixin, ModelsMixin, db.Model):
     )
 
     subcategory = orm.relationship("Subcategory", back_populates='category')
-    item = orm.relationship("Item", back_populates = 'category')
+    item = orm.relationship("Item", back_populates='category')

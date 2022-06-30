@@ -14,4 +14,18 @@ class Status:
     def category_exists(cls):
         return cls(400, 'Category already exists')
 
-    
+    @classmethod
+    def category_has_no_name(cls):
+        return cls(400, "You need to provide category name")
+
+    @classmethod
+    def category_does_not_exists(cls):
+        return cls(400, "Category does not exists")
+
+    @classmethod
+    def category_is_not_activated(cls):
+        return cls(400, "Category is not activated")
+
+    @classmethod
+    def category_already_activated(cls):
+        return cls(400, "Category is already activated")

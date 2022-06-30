@@ -2,6 +2,7 @@ import arrow
 import sqlalchemy as sa
 from sqlalchemy import ext
 
+
 class TimeStampedModelMixin:
     """
     Ensures and maintains ``created_at`` and ``updated_at`` attributes on

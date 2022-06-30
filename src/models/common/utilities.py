@@ -13,7 +13,6 @@ try:
 except ImportError:
     HAS_PYGMENTS = False
 
-
 try:
     import sqlparse
 
@@ -64,5 +63,6 @@ def all_models():
     from Hexa import models
 
     for klass in models.__dict__.values():
-        if isinstance(klass, type) and issubclass(klass, flask_sqlalchemy.model.Model):
+        if isinstance(klass, type) and issubclass(klass,
+                                                  flask_sqlalchemy.model.Model):
             yield klass

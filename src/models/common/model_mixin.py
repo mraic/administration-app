@@ -20,7 +20,6 @@ class ModelsMixin:
             db.session.rollback()
             raise e
 
-
     @staticmethod
     def flush():
         db.session.flush()

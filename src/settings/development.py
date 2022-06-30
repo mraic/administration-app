@@ -2,6 +2,7 @@ import os
 
 from .config_base import ConfigBase
 
+
 class Development(ConfigBase):
     DEBUG = True
 

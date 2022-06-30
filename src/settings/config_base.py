@@ -92,10 +92,10 @@ class ConfigBase:
     SYSLOG_FACILITY = None
     SYSLOG_SOCKET_TYPE = None
     FILELOG_FORMAT = \
-        u'[%(asctime)s] [PID: %(process)s] [{0}] %(levelname)s: %(message)s'.\
+        u'[%(asctime)s] [PID: %(process)s] [{0}] %(levelname)s: %(message)s'. \
             format(APPLICATION_NAME)
     SYSLOG_FORMAT = \
-        '%(isotime_utc)s %(hostname)s {0}[%(process)d]: %(levelname)s %(message)s'.\
+        '%(isotime_utc)s %(hostname)s {0}[%(process)d]: %(levelname)s %(message)s'. \
             format(APPLICATION_NAME)
 
     ADDITIONAL_LOGGERS = [
@@ -104,6 +104,7 @@ class ConfigBase:
         # 'sqlalchemy',
         'sqlalchemy.engine',
     ]
+
     def read_config_file(self):
         config_parser = configparser.ConfigParser()
         if not config_parser.read(self.config_files):
@@ -115,7 +116,7 @@ class ConfigBase:
 
         section = config_parser['Settings']
         self.FLASK_SETUP_APP_FRONTEND_API = section.get('this_app_frontend_api',
-                                                fallback='')
+                                                        fallback='')
         ##################################
 
         section = config_parser['Flask']
@@ -123,7 +124,7 @@ class ConfigBase:
         self.JWT_EXPIRES_IN = section.getint('jwt_expires_in_seconds',
                                              fallback=45)
         self.EMAIL_TOKEN = section.get('email_token', fallback='')
-        self.JWT_SECRET_KEY = section.get('jwt_secret_key', fallback = '')
+        self.JWT_SECRET_KEY = section.get('jwt_secret_key', fallback='')
         section = config_parser['Logging']
         self.FILELOG_LOGLEVEL = section.get('filelog_loglevel',
                                             fallback='debug')
@@ -160,7 +161,7 @@ class ConfigBase:
                           'critical': logging.CRITICAL,
                           'warning': logging.WARNING,
                           'debug': logging.DEBUG,
-                          'error': logging.ERROR,}[
+                          'error': logging.ERROR, }[
                              self.FILELOG_LOGLEVEL.lower()])
         return handler
 
@@ -176,7 +177,7 @@ class ConfigBase:
             handler = logging.handlers.SysLogHandler(
                 address=syslog_address, facility=self.SYSLOG_FACILITY,
                 socktype={'tcp': socket.SOCK_STREAM,
-                          'udp': socket.SOCK_DGRAM,}[
+                          'udp': socket.SOCK_DGRAM, }[
                     self.SYSLOG_SOCKET_TYPE.lower()]
             )
             handler.setFormatter(logging.Formatter(self.SYSLOG_FORMAT))
@@ -185,7 +186,7 @@ class ConfigBase:
                           'critical': logging.CRITICAL,
                           'warning': logging.WARNING,
                           'debug': logging.DEBUG,
-                          'error': logging.ERROR,}[
+                          'error': logging.ERROR, }[
                              self.SYSLOG_LOGLEVEL.lower()])
 
         handler.addFilter(ContextFilter())
@@ -244,6 +245,3 @@ class ConfigBase:
             app.config.from_object(self)
             self._init_loggers(app)
             CORS(app)
-
-
-

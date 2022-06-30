@@ -50,11 +50,11 @@ def _create_tablespace(engine, name, location="/data_tmpfs/postgresql"):
 
 def _drop_tablespace(engine, name):
     if (
-        _get_scalar_result(
-            engine,
-            f"SELECT count(*) from pg_catalog.pg_tablespace WHERE spcname = '{name}';",
-        )
-        == 1
+            _get_scalar_result(
+                engine,
+                f"SELECT count(*) from pg_catalog.pg_tablespace WHERE spcname = '{name}';",
+            )
+            == 1
     ):
         engine.execute(f"DROP TABLESPACE {name};")
 

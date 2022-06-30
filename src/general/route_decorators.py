@@ -4,17 +4,19 @@ import gzip
 from flask import request, after_this_request
 from io import BytesIO as IO
 
+
 def allow_access(function):
     """allow_access decorator that requires a valid permission
      :param function: function parameter
      :return: decorated_function
      """
+
     @wraps(function)
     def decorated_function(*args, **kwargs):
-
-        return function(*args,**kwargs)
+        return function(*args, **kwargs)
 
     return decorated_function()
+
 
 def log_access(log_caregory_id=None):
     """
@@ -27,7 +29,6 @@ def log_access(log_caregory_id=None):
     def decorator(function):
         @wraps(function)
         def decorated_function(*args, **kwargs):
-
             return function(*args, **kwargs)
 
         return decorated_function
@@ -48,12 +49,12 @@ def gzipped(func):
             response.direct_passthrough = False
 
             if (response.status_code < 200 or
-                response.status_code >=300 or
-                'Content-Encoding' in response.headers):
+                    response.status_code >= 300 or
+                    'Content-Encoding' in response.headers):
                 return response
 
             gzip_buffer = IO()
-            gzip_file = gzip.GzipFile(mode = 'wb',
+            gzip_file = gzip.GzipFile(mode='wb',
                                       fileobj=gzip_buffer)
             gzip_file.write(response.data)
             gzip_file.close()
