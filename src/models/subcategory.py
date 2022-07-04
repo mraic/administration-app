@@ -10,7 +10,39 @@ from sqlalchemy.dialects.postgresql import UUID
 
 
 class SubcategoryQuery(BaseQueryMixin, db.Query):
-    pass
+
+    def get_one_by_id(self, _id):
+        try:
+            return self.filter(
+                Subcategory.id == _id
+            ).first()
+        except Exception as e:
+            db.session.rollback()
+            raise e
+
+    def check_if_subcategory_exists(self, name):
+        try:
+            return self.filter(
+                Subcategory.name == name
+            ).first() is not None
+        except Exception as e:
+            db.session.rollback()
+            raise e
+
+    @staticmethod
+    def get_all_subcategories(filter_data, start, length):
+        try:
+            return db.session.query(
+                Subcategory
+            ).filter(
+                filter_data,
+                Subcategory.status == Subcategory.STATUSES.active
+            ).paginate(
+                page=start, per_page=length, error_out=False, max_per_page=50
+            )
+        except Exception as e:
+            db.session.rollback()
+            raise e
 
 
 class SubcategoryStatus(enum.Enum):
@@ -28,7 +60,7 @@ class Subcategory(BaseModelMixin, ModelsMixin, db.Model):
     query_class = SubcategoryQuery
 
     STATUSES = SubcategoryStatus
-    STATE = SubcategoryState
+    STATES = SubcategoryState
 
     id = sa.Column(UUID(as_uuid=True), default=uuid4, primary_key=True)
     name = sa.Column(sa.String(length=255), nullable=False)

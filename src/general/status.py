@@ -29,3 +29,23 @@ class Status:
     @classmethod
     def category_already_activated(cls):
         return cls(400, "Category is already activated")
+
+    @classmethod
+    def subcategory_exists(cls):
+        return cls(400, 'Subcategory already exists')
+
+    @classmethod
+    def subcategory_cant_be_blank(cls):
+        return cls(400, 'You must provide name for subcategory')
+
+    @classmethod
+    def subcategory_doesnt_exists(cls):
+        return cls(400, 'Subcategory does not exists')
+
+    @classmethod
+    def subcategory_deactivated(cls):
+        return cls(400, "Subcategory deleted")
+
+    @classmethod
+    def subcategory_activated(cls):
+        return cls(400, "Subcategory already activated")

@@ -3,8 +3,9 @@ from flask_apispec import doc, use_kwargs, marshal_with
 from src import bpp, Category
 from src.domain.category_service import CategoryService
 from src.views.category_schema import category_schema, \
-    category_response_one_schema, update_category_schema,\
-    request_category_filter_schema, get_all_category_data
+    category_response_one_schema, update_category_schema, \
+    request_category_filter_schema, get_all_category_data, auto_complete_schema, \
+    response_category_many_schema
 from src.views.message_schema import message_response_schema
 
 
@@ -87,9 +88,20 @@ def get_category(**kwargs):
     filter_data = kwargs.get('filter_data')
     paginate_data = kwargs.get('paginate_data')
 
-    items, total, status = CategoryService.get_all_users(
+    items, total, status = CategoryService.get_all_categories(
         filter_data=filter_data, paginate_data=paginate_data
     )
 
     return dict(data=dict(items=items, total=total),
                 status=status.message)
+
+
+@doc(description='Autocomplete category route', tags=['Category'])
+@bpp.post('/category/autocomplete')
+@use_kwargs(auto_complete_schema, apply=True)
+@marshal_with(response_category_many_schema, 200, apply=True)
+@marshal_with(message_response_schema, 400, apply=True)
+def autocomplete(**kwargs):
+    data, status = CategoryService.autocomplete(search=kwargs.get('search'))
+
+    return dict(data=data, message=status.message)

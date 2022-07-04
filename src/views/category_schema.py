@@ -8,8 +8,8 @@ from ..views import BaseSchema
 
 class CategorySchema(BaseSchema):
     id = fields.UUID(dump_only=True)
-    name = fields.Str(validate=Length(min=5, max=30))
-    category_icon = fields.Str(validate=Length(min=2, max=30))
+    name = fields.Str(required=True, validate=Length(min=5, max=30))
+    category_icon = fields.Str(required=True, validate=Length(min=2, max=30))
     state = EnumField(Category.STATES, by_value=True, dump_only=True)
     status = EnumField(Category.STATUSES, by_value=True, dump_only=True)
     created_at = fields.DateTime(dump_only=True)
@@ -54,9 +54,20 @@ class GetAllCategoryPaginateSchema(BaseSchema):
     message = fields.String(dump_only=True)
 
 
+class AutoCompleteSchema(BaseSchema):
+    search = fields.String(required=True)
+
+
+class ResponseCategoryManySchema(BaseSchema):
+    data = fields.Nested("CategorySchema", many=True, dump_only=True)
+    message = fields.String(dump_only=True)
+
+
 category_schema = CategorySchema()
 category_response_one_schema = CategoryResponseSchema()
 update_category_schema = UpdateCategorySchema()
 activate_category_schema = ActivateCategorySchema()
 request_category_filter_schema = CategoryFilterSchema()
 get_all_category_data = GetAllCategoryPaginateSchema()
+auto_complete_schema = AutoCompleteSchema()
+response_category_many_schema = ResponseCategoryManySchema()

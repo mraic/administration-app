@@ -3,7 +3,7 @@ from uuid import uuid4
 from src import db
 from src.models.common import BaseModelMixin, ModelsMixin
 import sqlalchemy as sa
-from sqlalchemy import orm
+from sqlalchemy import orm, or_
 from sqlalchemy.dialects.postgresql import UUID
 
 
@@ -12,8 +12,7 @@ class CategoryQuery(BaseModelMixin, db.Query):
     def get_one_by_name(self, name):
         try:
             return self.filter(
-                Category.name == name
-            ).first()
+                Category.name == name).first() is not None
         except Exception as e:
             db.session.rollback()
             raise e
@@ -27,8 +26,18 @@ class CategoryQuery(BaseModelMixin, db.Query):
             db.session.rollback()
             raise e
 
+    def check_if_name_exists(self, name):
+        try:
+            return self.filter(
+                Category.name == name,
+            ).first() is not None
+        except Exception as e:
+            db.session.rollback()
+            raise e
+
+
     @staticmethod
-    def get_all_users(filter_data, start, length):
+    def get_all_categories(filter_data, start, length):
         try:
             return db.session.query(
                 Category
@@ -42,6 +51,17 @@ class CategoryQuery(BaseModelMixin, db.Query):
             db.session.rollback()
             raise e
 
+    def autocomplete(self, search):
+        try:
+            return self.filter(
+                Category.status == Category.STATUSES.active,
+                or_(
+                    Category.name.ilike('%'+search+'%')
+                )
+            ).all()
+        except Exception as e:
+            db.session.rollback()
+            raise e
 
 class CategoryStatus(enum.Enum):
     inactive = 0

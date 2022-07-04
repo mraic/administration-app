@@ -2,7 +2,7 @@ from sqlalchemy import and_
 
 from src import Category, AppLogException
 from src.general import Status, filter_data_result_with_operator
-from ..views import CategorySchema
+
 
 
 class CategoryService:
@@ -12,11 +12,11 @@ class CategoryService:
 
     def create(self):
 
-        if CategoryService.get_one_by_name(name=self.category.name):
-            raise AppLogException(Status.category_exists())
-
         if self.category.name == '':
             raise AppLogException(Status.category_has_no_name())
+
+        if CategoryService.check_if_name_exists(name=self.category.name):
+            raise AppLogException(Status.category_exists())
 
         self.category.add()
         self.category.commit_or_rollback()
@@ -49,6 +49,9 @@ class CategoryService:
 
         if data.category is None:
             raise AppLogException(Status.category_does_not_exists())
+
+        if data.category.status == Category.STATUSES.inactive:
+            raise AppLogException(Status.category_is_not_activated())
 
         data.category.status = Category.STATUSES.inactive
 
@@ -109,7 +112,11 @@ class CategoryService:
         return Category.query.get_one_by_name(name=name)
 
     @staticmethod
-    def get_all_users(filter_data, paginate_data):
+    def check_if_name_exists(name):
+        return Category.query.check_if_name_exists(name = name)
+
+    @staticmethod
+    def get_all_categories(filter_data, paginate_data):
         filter_main = and_()
         if filter_data is not None:
             filter_main = and_(
@@ -125,8 +132,15 @@ class CategoryService:
         length = paginate_data.get('length') \
             if paginate_data is not None and paginate_data['length'] else 10
 
-        data = Category.query.get_all_users(
+        data = Category.query.get_all_categories(
             filter_data=filter_main, start=start, length=length
         )
 
         return data.items, data.total, Status.successfully_processed()
+
+    @staticmethod
+    def autocomplete(search):
+
+        data = Category.query.autocomplete(search=search)
+
+        return data, Status.successfully_processed().message
