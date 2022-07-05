@@ -49,3 +49,23 @@ class Status:
     @classmethod
     def subcategory_activated(cls):
         return cls(400, "Subcategory already activated")
+
+    @classmethod
+    def subcategory_not_activated(cls):
+        return cls(400, "Subcategory is not activated")
+
+    @classmethod
+    def item_has_no_name(cls):
+        return cls(400, "Item has no name")
+
+    @classmethod
+    def item_does_not_exists(cls):
+        return cls(400, 'Item does not exists')
+
+    @classmethod
+    def item_is_not_activated(cls):
+        return cls(400, 'Item is not activated')
+
+    @classmethod
+    def item_already_activated(cls):
+        return cls(400, 'Item is already activated')

@@ -1,16 +1,52 @@
 import enum
 from uuid import uuid4
 
+import sqlalchemy as sa
+from sqlalchemy import or_
 from sqlalchemy import orm
 from sqlalchemy.dialects.postgresql import UUID
 
 from src import db
 from src.models.common import BaseModelMixin, ModelsMixin
-import sqlalchemy as sa
 
 
 class ItemQuery(BaseModelMixin, db.Query):
-    pass
+
+    def get_one_by_id(self, _id):
+        try:
+            return self.filter(
+                Item.id == _id
+            ).first is not None
+        except Exception as e:
+            db.session.rollback()
+            raise e
+
+    @staticmethod
+    def get_all_categories(filter_data, start, length):
+        try:
+            return db.session.query(
+                Item
+            ).filter(
+                filter_data,
+                Item.status == Item.STATUSES.active
+            ).paginate(
+                page=start, per_page=length, error_out=False, max_per_page=50
+            )
+        except Exception as e:
+            db.session.rollback()
+            raise e
+
+    def autocomplete(self, search):
+        try:
+            return self.filter(
+                Item.status == Item.STATUSES.active,
+                or_(
+                    Item.name.ilike('%' + search + '%')
+                )
+            ).all()
+        except Exception as e:
+            db.session.rollback()
+            raise e
 
 
 class ItemState(enum.Enum):
@@ -24,15 +60,17 @@ class ItemStatus(enum.Enum):
 
 
 class Item(BaseModelMixin, ModelsMixin, db.Model):
-
     __tablename__ = 'items'
     query_class = ItemQuery
+
+    STATUSES = ItemStatus
+    STATES = ItemState
 
     id = sa.Column(UUID(as_uuid=True), default=uuid4, primary_key=True)
     name = sa.Column(sa.String(length=255), nullable=False)
     description = sa.Column(sa.Text(), nullable=False)
     price = sa.Column(sa.Float())
-    condition = sa.Column(sa.String(length=255), nullable = False)
+    condition = sa.Column(sa.String(length=255), nullable=False)
     state = sa.Column(
         sa.Enum(
             ItemState,
@@ -72,7 +110,7 @@ class Item(BaseModelMixin, ModelsMixin, db.Model):
                             index=True)
 
     listitems_id = db.Column(UUID(as_uuid=True),
-                          db.ForeignKey('listitems.id', ondelete="RESTRICT"),
+                             db.ForeignKey('listitems.id', ondelete="RESTRICT"),
                              nullable=False,
                              index=True)
 

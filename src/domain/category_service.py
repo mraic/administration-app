@@ -4,19 +4,31 @@ from src import Category, AppLogException
 from src.general import Status, filter_data_result_with_operator
 
 
-
 class CategoryService:
 
     def __init__(self, category=Category()):
         self.category = category
 
     def create(self):
+        import os
+
 
         if self.category.name == '':
             raise AppLogException(Status.category_has_no_name())
 
+        ime = self.category.name.split()
+
+        if len(ime) > 1:
+            self.category.name = "-".join(ime).lower()
+
         if CategoryService.check_if_name_exists(name=self.category.name):
             raise AppLogException(Status.category_exists())
+
+        self.category.category_icon = \
+            "/static/category_icon/{}".format(self.category.name)
+
+        #os.makedirs("/static/category_icon/{}".format(self.category.name))
+
 
         self.category.add()
         self.category.commit_or_rollback()
@@ -33,9 +45,16 @@ class CategoryService:
         if data.category.status == Category.STATUSES.inactive:
             raise AppLogException(Status.category_is_not_activated())
 
-        data.category.name = self.category.name
-        data.category.category_icon = self.category.category_icon
+        ime = self.category.name.split()
 
+        if len(ime) > 1:
+            self.category.name = "-".join(ime).lower()
+
+        data.category.category_icon = \
+            self.category.category_icon = \
+            "/static/category_icon/{}".format(self.category.name)
+
+        data.category.name = self.category.name
         data.category.update()
         data.category.commit_or_rollback()
 
@@ -113,7 +132,7 @@ class CategoryService:
 
     @staticmethod
     def check_if_name_exists(name):
-        return Category.query.check_if_name_exists(name = name)
+        return Category.query.check_if_name_exists(name=name)
 
     @staticmethod
     def get_all_categories(filter_data, paginate_data):

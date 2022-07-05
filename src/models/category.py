@@ -64,8 +64,8 @@ class CategoryQuery(BaseModelMixin, db.Query):
             raise e
 
 class CategoryStatus(enum.Enum):
-    inactive = 0
     active = 1
+    inactive = 0
 
 
 class CategoryState(enum.Enum):

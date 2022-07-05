@@ -13,7 +13,7 @@ class SubcategoryService:
     def create(self):
 
         if self.subcategory.name == '':
-            raise AppLogException(Status.subcategory_exists())
+            raise AppLogException(Status.subcategory_cant_be_blank())
 
         if SubcategoryService.check_if_subcategory_exists(
                 name=self.subcategory.name):
@@ -32,11 +32,18 @@ class SubcategoryService:
             raise AppLogException(Status.subcategory_doesnt_exists())
 
         if data.subcategory.status == Subcategory.STATUSES.inactive:
-            raise AppLogException(Status.subcategory_doesnt_exists())
+            raise AppLogException(Status.subcategory_not_activated())
 
         data.subcategory.name = self.subcategory.name
         data.subcategory.subcategory_icon = self.subcategory.subcategory_icon
-        data.subcategory.category_id = self.subcategory.category_id
+
+        data_category = \
+            CategoryService.get_one_by_id(_id=self.subcategory.category_id)
+
+        if data_category is True:
+            data.subcategory.category_id = self.subcategory.category_id
+        else:
+            raise AppLogException(Status.category_does_not_exists())
 
         self.subcategory = data.subcategory
 
@@ -88,7 +95,7 @@ class SubcategoryService:
 
     def deactivate(self, _id):
 
-        data = CategoryService.get_one_by_id(_id=self.subcategory.id)
+        data = SubcategoryService.get_one_by_id(_id=self.subcategory.id)
 
         if data.subcategory is None:
             raise AppLogException(Status.subcategory_doesnt_exists())
@@ -132,10 +139,9 @@ class SubcategoryService:
     @staticmethod
     def autocomplete(search):
 
-        data = Subcategory.query.autocomplete(search = search)
+        data = Subcategory.query.autocomplete(search=search)
 
         return data, Status.successfully_processed().message
-
 
     @classmethod
     def get_one_by_id(cls, _id):

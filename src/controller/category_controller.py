@@ -17,8 +17,7 @@ from src.views.message_schema import message_response_schema
 def create_category(**kwargs):
     category_service = CategoryService(
         category=Category(
-            name=kwargs.get('name').strip(),
-            category_icon=kwargs.get('category_icon'),
+            name=kwargs.get('name').strip()
         )
     )
 
@@ -37,7 +36,6 @@ def alter_category(category_id, **kwargs):
         category=Category(
             id=category_id,
             name=kwargs.get('name'),
-            category_icon=kwargs.get('category_icon'),
         )
     )
 

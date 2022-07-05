@@ -2,7 +2,6 @@ import copy
 from types import SimpleNamespace
 
 import pytest
-from faker import Faker
 
 from src import AppLogException, Category
 from src.domain import CategoryService
@@ -13,18 +12,12 @@ from src.general import Status
 class TestCategoryServices:
 
     def test_create_category(self, db, mocker):
-        fake = Faker()
-
         mock_category_get_one = mocker.patch(
             "src.domain.category_service.CategoryService."
-            "get_one_by_name", autospec=True
+            "check_if_name_exists", autospec=True
         )
 
-        data = copy.deepcopy(self.dummy_category)
-        data.name = fake.pystr()
-
-        mock_category_get_one.return_value = \
-            CategoryService(category=data)
+        mock_category_get_one.return_value = False
 
         category_domain = CategoryService(category=self.dummy_category)
 
@@ -212,7 +205,6 @@ class TestCategoryServices:
                Status.category_is_not_activated().message
 
     def test_category_already_activated(self, db, mocker):
-
         mock_category_get_ony_by_id = mocker.patch(
             "src.domain.category_service.CategoryService."
             "get_one_by_id", autospec=True
@@ -236,9 +228,7 @@ class TestCategoryServices:
         assert ape.value.status.message == \
                Status.category_already_activated().message
 
-
     def test_category_deactivate(self, db, mocker):
-
         mock_category_get_ony_by_id = mocker.patch(
             "src.domain.category_service.CategoryService."
             "get_one_by_id", autospec=True
@@ -252,13 +242,12 @@ class TestCategoryServices:
 
         category_domain = CategoryService(category=self.dummy_category)
 
-        category_status = category_domain.deactivate(_id = self.dummy_category)
+        category_status = category_domain.deactivate(_id=self.dummy_category)
 
-        assert category_status.message ==\
+        assert category_status.message == \
                Status.successfully_processed().message
 
     def test_deactivate_category_not_exists(self, db, mocker):
-
         mock_category_get_on_by_id = mocker.patch(
             "src.domain.category_service.CategoryService."
             "get_one_by_id", autospec=True
@@ -270,13 +259,12 @@ class TestCategoryServices:
         category_domain = CategoryService(category=self.dummy_category)
 
         with pytest.raises(AppLogException) as ape:
-            category_domain.deactivate(_id = self.dummy_category.id)
+            category_domain.deactivate(_id=self.dummy_category.id)
 
         assert ape.value.status.message == \
-            Status.category_does_not_exists().message
+               Status.category_does_not_exists().message
 
     def test_deactivate_category_not_activated(self, db, mocker):
-
         mock_category_get_on_by_id = mocker.patch(
             "src.domain.category_service.CategoryService."
             "get_one_by_id", autospec=True
@@ -296,9 +284,7 @@ class TestCategoryServices:
         assert ape.value.status.message == \
                Status.category_is_not_activated().message
 
-
     def test_category_paginate(self, db, mocker):
-
         mock_category = mocker.patch(
             "src.models.category.CategoryQuery."
             "get_all_categories", autospec=True

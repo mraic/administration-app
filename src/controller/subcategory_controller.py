@@ -105,7 +105,7 @@ def get_subcategory(**kwargs):
 
 
 @doc(description='Autocomplete category route', tags=['Subcategory'])
-@bpp.post('/category/autocomplete')
+@bpp.post('/subcategory/autocomplete')
 @use_kwargs(auto_complete_schema, apply=True)
 @marshal_with(response_subcategory_many_schema, 200, apply=True)
 @marshal_with(message_response_schema, 400, apply=True)

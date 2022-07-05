@@ -1,7 +1,3 @@
-from threading import Thread
-from urllib.error import HTTPError
-
-from flask import current_app
 from sqlalchemy import and_
 
 

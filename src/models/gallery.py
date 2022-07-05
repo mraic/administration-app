@@ -1,12 +1,11 @@
 from uuid import uuid4
 
+import sqlalchemy as sa
 from sqlalchemy import orm
+from sqlalchemy.dialects.postgresql import UUID
 
 from src import db
 from src.models.common import BaseQueryMixin, ModelsMixin, BaseModelMixin
-import sqlalchemy as sa
-
-from sqlalchemy.dialects.postgresql import UUID
 
 
 class GalleryQuery(BaseQueryMixin, db.Query):

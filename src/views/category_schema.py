@@ -9,7 +9,7 @@ from ..views import BaseSchema
 class CategorySchema(BaseSchema):
     id = fields.UUID(dump_only=True)
     name = fields.Str(required=True, validate=Length(min=5, max=30))
-    category_icon = fields.Str(required=True, validate=Length(min=2, max=30))
+    category_icon = fields.Str()
     state = EnumField(Category.STATES, by_value=True, dump_only=True)
     status = EnumField(Category.STATUSES, by_value=True, dump_only=True)
     created_at = fields.DateTime(dump_only=True)
@@ -20,7 +20,7 @@ class UpdateCategorySchema(CategorySchema):
     class Meta:
         items = fields.Nested("BaseSchema", dump_only=True)
         message = fields.String(dump_only=True)
-        fields = ('name', 'category_icon', 'state', 'status')
+        fields = ('name', 'category_icon' , 'state', 'status')
 
 
 class CategoryResponseSchema(BaseSchema):
