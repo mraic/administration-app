@@ -1,12 +1,13 @@
 import enum
 from uuid import uuid4
+
+import sqlalchemy as sa
 from sqlalchemy import orm
+from sqlalchemy.dialects.postgresql import UUID
 
 from .common import BaseModelMixin, ModelsMixin
 from .. import db
 from ..models.common import BaseQueryMixin
-import sqlalchemy as sa
-from sqlalchemy.dialects.postgresql import UUID
 
 
 class SubcategoryQuery(BaseQueryMixin, db.Query):

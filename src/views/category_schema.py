@@ -40,8 +40,8 @@ class CategoryFilterSchema(BaseSchema):
 
 
 class CategoryFilterRequestSchema(BaseSchema):
-    filter_data = fields.Nested("CategoryFilterSchema", required=False)
-    paginate_data = fields.Nested("PaginationSchema", required=True)
+    filter_data = fields.Nested("CategoryFilterSchema")
+    paginate_data = fields.Nested("PaginationSchema")
 
 
 class GetAllCategoryPaginationDataSchema(BaseSchema):
@@ -62,12 +62,19 @@ class ResponseCategoryManySchema(BaseSchema):
     data = fields.Nested("CategorySchema", many=True, dump_only=True)
     message = fields.String(dump_only=True)
 
+class CategoryFullSchema(CategorySchema):
+    subcategory = fields.Nested("SubcategorySchema")
+
+class CategoryResponseFullSchema(BaseSchema):
+    data = fields.Nested("CategoryFullSchema", many=True, dump_only=True)
+    message = fields.String(dump_only=True)
 
 category_schema = CategorySchema()
 category_response_one_schema = CategoryResponseSchema()
 update_category_schema = UpdateCategorySchema()
 activate_category_schema = ActivateCategorySchema()
-request_category_filter_schema = CategoryFilterSchema()
+request_category_filter_schema = CategoryFilterRequestSchema()
 get_all_category_data = GetAllCategoryPaginateSchema()
 auto_complete_schema = AutoCompleteSchema()
 response_category_many_schema = ResponseCategoryManySchema()
+category_response_full_schema = CategoryResponseFullSchema()

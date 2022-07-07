@@ -23,6 +23,10 @@ class FromToSchema(Schema):
     _from = fields.Float(required=True, allow_none=True)
     _to = fields.Float(required=True, allow_none=True)
 
+class DateFromToSchema(Schema):
+    date_from = fields.DateTime(required=False, allow_none=True)
+    date_to = fields.DateTime(required=False, allow_none=True)
+
 
 class PaginationSchema(Schema):
     start = fields.Int(

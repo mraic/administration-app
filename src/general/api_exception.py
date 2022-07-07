@@ -3,8 +3,9 @@ from flask import jsonify
 from marshmallow import ValidationError
 from sqlalchemy.exc import IntegrityError
 from werkzeug.exceptions import UnprocessableEntity
-from . import AppLogException, DefaultAppException
-from ..general import Status
+
+from .exception import AppLogException, DefaultAppException
+from .status import Status
 
 
 class ApiExceptionHandler:

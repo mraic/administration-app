@@ -238,7 +238,7 @@ class TestSubcategoryServices:
             subcategory_domain.activate(_id=self.dummy_subcategory.id)
 
         assert ape.value.status.message == \
-            Status.subcategory_deactivated().message
+               Status.subcategory_deactivated().message
 
     def test_activate_subcategory_activated(self, db, mocker):
         mock_check_subcategory = mocker.patch(
@@ -329,7 +329,8 @@ class TestSubcategoryServices:
         )
 
         total = 1
-        data = [SimpleNamespace(Subcategory=self.dummy_subcategory, total=total)]
+        data = [
+            SimpleNamespace(Subcategory=self.dummy_subcategory, total=total)]
 
         mock_category.return_value = SimpleNamespace(
             items=data, total=total

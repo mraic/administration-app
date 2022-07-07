@@ -1,10 +1,12 @@
 import enum
 from uuid import uuid4
-from src import db
-from src.models.common import BaseModelMixin, ModelsMixin
+
 import sqlalchemy as sa
 from sqlalchemy import orm, or_
 from sqlalchemy.dialects.postgresql import UUID
+
+from src import db
+from src.models.common import BaseModelMixin, ModelsMixin
 
 
 class CategoryQuery(BaseModelMixin, db.Query):
@@ -35,7 +37,6 @@ class CategoryQuery(BaseModelMixin, db.Query):
             db.session.rollback()
             raise e
 
-
     @staticmethod
     def get_all_categories(filter_data, start, length):
         try:
@@ -56,12 +57,13 @@ class CategoryQuery(BaseModelMixin, db.Query):
             return self.filter(
                 Category.status == Category.STATUSES.active,
                 or_(
-                    Category.name.ilike('%'+search+'%')
+                    Category.name.ilike('%' + search + '%')
                 )
             ).all()
         except Exception as e:
             db.session.rollback()
             raise e
+
 
 class CategoryStatus(enum.Enum):
     active = 1

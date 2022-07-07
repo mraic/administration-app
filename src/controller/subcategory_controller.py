@@ -2,12 +2,12 @@ from flask_apispec import doc, use_kwargs, marshal_with
 
 from src import bpp, Subcategory
 from src.domain.subcategory_service import SubcategoryService
-from src.views.category_schema import category_response_one_schema, \
-    get_all_category_data, request_category_filter_schema
+
 from src.views.message_schema import message_response_schema
 from src.views.subcategory_schema import response_one_subcategory_schema, \
     create_subcategory, update_subcategory_schema, \
-    response_subcategory_many_schema, auto_complete_schema
+    response_subcategory_many_schema, auto_complete_schema, \
+    request_subcategory_filter_schema, get_all_subcategory_data
 
 
 @doc(description="Create subcategory route", tags=['Subcategory'])
@@ -65,7 +65,7 @@ def delete_subcategory(subcategory_id):
 
 @doc(description='Activate category route', tags=['Subcategory'])
 @bpp.post('/subcategories/activate/<uuid:subcategory_id>')
-@marshal_with(category_response_one_schema, 200, apply=True)
+@marshal_with(response_one_subcategory_schema, 200, apply=True)
 @marshal_with(message_response_schema, 400, apply=True)
 def activate_subcategory(subcategory_id):
     subcategory_service = SubcategoryService(
@@ -77,7 +77,7 @@ def activate_subcategory(subcategory_id):
 
 @doc(description='Deactivate category route', tags=['Subcategory'])
 @bpp.post('/subcategories/deactivate/<uuid:subcategory_id>')
-@marshal_with(category_response_one_schema, 200, apply=True)
+@marshal_with(response_one_subcategory_schema, 200, apply=True)
 @marshal_with(message_response_schema, 400, apply=True)
 def deactivate_subcategory(subcategory_id):
     subcategory_service = SubcategoryService(
@@ -89,10 +89,11 @@ def deactivate_subcategory(subcategory_id):
 
 @doc(description='Paginate category route', tags=['Subcategory'])
 @bpp.post('/subcategory/paginate')
-@use_kwargs(request_category_filter_schema, apply=True)
-@marshal_with(get_all_category_data, 200, apply=True)
+@use_kwargs(request_subcategory_filter_schema, apply=True)
+@marshal_with(get_all_subcategory_data, 200, apply=True)
 @marshal_with(message_response_schema, 400, apply=True)
 def get_subcategory(**kwargs):
+
     filter_data = kwargs.get('filter_data')
     paginate_data = kwargs.get('paginate_data')
 

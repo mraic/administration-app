@@ -2,7 +2,7 @@ import enum
 from uuid import uuid4
 
 import sqlalchemy as sa
-from sqlalchemy import or_
+from sqlalchemy import or_, asc
 from sqlalchemy import orm
 from sqlalchemy.dialects.postgresql import UUID
 
@@ -22,14 +22,14 @@ class ItemQuery(BaseModelMixin, db.Query):
             raise e
 
     @staticmethod
-    def get_all_categories(filter_data, start, length):
+    def get_all_items(filter_data, start, length):
         try:
             return db.session.query(
                 Item
             ).filter(
                 filter_data,
                 Item.status == Item.STATUSES.active
-            ).paginate(
+            ).order_by('created_at').paginate(
                 page=start, per_page=length, error_out=False, max_per_page=50
             )
         except Exception as e:
@@ -38,7 +38,7 @@ class ItemQuery(BaseModelMixin, db.Query):
 
     def autocomplete(self, search):
         try:
-            return self.filter(
+            return not self.filter(
                 Item.status == Item.STATUSES.active,
                 or_(
                     Item.name.ilike('%' + search + '%')
@@ -70,7 +70,6 @@ class Item(BaseModelMixin, ModelsMixin, db.Model):
     name = sa.Column(sa.String(length=255), nullable=False)
     description = sa.Column(sa.Text(), nullable=False)
     price = sa.Column(sa.Float())
-    condition = sa.Column(sa.String(length=255), nullable=False)
     state = sa.Column(
         sa.Enum(
             ItemState,
@@ -86,7 +85,7 @@ class Item(BaseModelMixin, ModelsMixin, db.Model):
     )
     status = sa.Column(
         sa.Enum(
-            ItemState,
+            ItemStatus,
             name="ck_items_status",
             native_enum=False,
             create_constraint=True,
@@ -109,7 +108,7 @@ class Item(BaseModelMixin, ModelsMixin, db.Model):
                             nullable=False,
                             index=True)
 
-    listitems_id = db.Column(UUID(as_uuid=True),
+    condition_id = db.Column(UUID(as_uuid=True),
                              db.ForeignKey('listitems.id', ondelete="RESTRICT"),
                              nullable=False,
                              index=True)
@@ -120,8 +119,7 @@ class Item(BaseModelMixin, ModelsMixin, db.Model):
     category = orm.relationship("Category", back_populates="item",
                                 uselist=False)
 
-    gallery = orm.relationship("Gallery", back_populates="item",
-                               uselist=False)
+    gallery = orm.relationship("Gallery", back_populates="item")
 
-    list_item = orm.relationship("ListItem", back_populates="item",
+    condition = orm.relationship("ListItem", back_populates="items",
                                  uselist=False)

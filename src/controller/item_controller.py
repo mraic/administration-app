@@ -3,7 +3,8 @@ from flask_apispec import doc, use_kwargs, marshal_with
 from src import bpp, Item
 from src.domain.item_service import ItemService
 from src.views.item_schema import item_response_one_schema, create_item_schema, \
-    update_item_schema, auto_complete_schema, response_item_many_schema
+    update_item_schema, auto_complete_schema, response_item_many_schema, \
+    request_item_filter_schema, get_all_items_schema
 from src.views.message_schema import message_response_schema
 
 
@@ -18,7 +19,7 @@ def create_item(**kwargs):
             name=kwargs.get('name'),
             description=kwargs.get('description'),
             price=kwargs.get('price'),
-            condition=kwargs.get('condition'),
+            condition_id=kwargs.get('condition_id'),
             subcategory_id=kwargs.get('subcategory_id')
         )
     )
@@ -69,6 +70,24 @@ def deactivate_item(item_id):
     status = item_service.deactivate(_id=item_id)
 
     return dict(message=status.message, data=item_service.item)
+
+@doc(description='Item paginate route', tags=['Item'])
+@bpp.post('/items/paginate/')
+@use_kwargs(request_item_filter_schema, apply=True)
+@marshal_with(get_all_items_schema, 200, apply=True)
+@marshal_with(message_response_schema, 400, apply=True)
+def item_paginate(**kwargs):
+
+    filter_data = kwargs.get('filter_data')
+    paginate_data = kwargs.get('paginate_data')
+
+    items, total, status = ItemService.get_all_items(
+        filter_data=filter_data, paginate_data=paginate_data
+    )
+
+    return dict(data=dict(items=items, total=total),
+                status=status.message)
+
 
 
 @doc(description='Autocomplete item route', tags=['Item'])

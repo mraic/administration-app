@@ -5,8 +5,9 @@ from src.domain.category_service import CategoryService
 from src.views.category_schema import category_schema, \
     category_response_one_schema, update_category_schema, \
     request_category_filter_schema, get_all_category_data, auto_complete_schema, \
-    response_category_many_schema
+    response_category_many_schema, category_response_full_schema
 from src.views.message_schema import message_response_schema
+
 
 
 @doc(description='Create category route', tags=['Category'])

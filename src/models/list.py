@@ -1,12 +1,12 @@
 import enum
 from uuid import uuid4
 
+import sqlalchemy as sa
 from sqlalchemy import orm
 from sqlalchemy.dialects.postgresql import UUID
+
 from src import db
 from src.models.common import BaseModelMixin, ModelsMixin
-
-import sqlalchemy as sa
 
 
 class ListStatus(enum.Enum):
@@ -33,7 +33,5 @@ class List(BaseModelMixin, ModelsMixin, db.Model):
         default=ListStatus.active,
         server_default=ListStatus.active.name
     )
-
-
 
     list_item = orm.relationship("ListItem", back_populates="list")

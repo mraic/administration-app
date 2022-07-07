@@ -1,12 +1,12 @@
 import enum
 from uuid import uuid4
 
+import sqlalchemy as sa
 from sqlalchemy import orm
 from sqlalchemy.dialects.postgresql import UUID
+
 from src import db
 from src.models.common import BaseModelMixin, ModelsMixin
-
-import sqlalchemy as sa
 
 
 class ListItemStatus(enum.Enum):
@@ -15,7 +15,6 @@ class ListItemStatus(enum.Enum):
 
 
 class ListItem(BaseModelMixin, ModelsMixin, db.Model):
-
     __tablename__ = "listitems"
 
     id = sa.Column(UUID(as_uuid=True), default=uuid4, primary_key=True)
@@ -39,12 +38,10 @@ class ListItem(BaseModelMixin, ModelsMixin, db.Model):
                         db.ForeignKey('lists.id', ondelete="RESTRICT"),
                         nullable=False,
                         index=True
-    )
+                        )
 
     list = orm.relationship("List",
                             back_populates="list_item",
                             uselist=False)
 
-
-    item = orm.relationship("Item", back_populates="list_item",
-                            uselist=False)
+    items = orm.relationship("Item", back_populates="condition")

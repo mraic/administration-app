@@ -1,6 +1,6 @@
 from copy import deepcopy
-import arrow
 
+import arrow
 import sqlalchemy as sa
 from sqlalchemy import orm
 from sqlalchemy.dialects.postgresql import insert as pg_insert

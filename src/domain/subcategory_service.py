@@ -118,8 +118,11 @@ class SubcategoryService:
         if filter_data is not None:
             filter_main = and_(
                 filter_main,
+                Subcategory.category_id == filter_data.get('category_id')
+                if filter_data.get('category_id') is not None else True,
                 filter_data_result_with_operator(
                     'name',
+                    Subcategory.name,
                     filter_data
                 )
             )

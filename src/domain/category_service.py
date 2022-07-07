@@ -10,8 +10,6 @@ class CategoryService:
         self.category = category
 
     def create(self):
-        import os
-
 
         if self.category.name == '':
             raise AppLogException(Status.category_has_no_name())
@@ -27,8 +25,7 @@ class CategoryService:
         self.category.category_icon = \
             "/static/category_icon/{}".format(self.category.name)
 
-        #os.makedirs("/static/category_icon/{}".format(self.category.name))
-
+        # os.makedirs("/static/category_icon/{}".format(self.category.name))
 
         self.category.add()
         self.category.commit_or_rollback()
@@ -122,6 +119,15 @@ class CategoryService:
 
         return Status.successfully_processed()
 
+    def get(self):
+
+        data = CategoryService.get_one_by_id(_id=self.category.id)
+
+        if data.category is None:
+            raise AppLogException(Status.category_does_not_exists())
+
+        return Status.successfully_processed()
+
     @classmethod
     def get_one_by_id(cls, _id):
         return cls(category=Category.query.get_one_by_id(_id=_id))
@@ -133,6 +139,7 @@ class CategoryService:
     @staticmethod
     def check_if_name_exists(name):
         return Category.query.check_if_name_exists(name=name)
+    
 
     @staticmethod
     def get_all_categories(filter_data, paginate_data):
@@ -143,7 +150,12 @@ class CategoryService:
                 filter_data_result_with_operator(
                     'name', Category.name,
                     filter_data
-                ))
+                ),
+                filter_data_result_with_operator(
+                    'id', Category.id,
+                    filter_data
+                )
+            )
 
         start = paginate_data.get('start') + 1 \
             if paginate_data is not None and paginate_data['start'] else 1

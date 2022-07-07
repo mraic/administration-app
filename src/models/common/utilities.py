@@ -1,7 +1,5 @@
 import sys
 
-import sqlalchemy as sa
-
 try:
     import pygments
     from pygments.formatters import Terminal256Formatter

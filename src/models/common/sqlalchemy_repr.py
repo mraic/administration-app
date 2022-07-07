@@ -7,11 +7,10 @@ from __future__ import unicode_literals
 
 import io
 import sys
+from reprlib import Repr as _Repr
 
 from sqlalchemy import inspect
 from sqlalchemy.ext.declarative import DeclarativeMeta
-
-from reprlib import Repr as _Repr
 
 __all__ = ["Repr", "PrettyRepr", "RepresentableBase", "PrettyRepresentableBase"]
 
@@ -27,7 +26,7 @@ class Repr(_Repr):
 
     def repr_Base(self, obj, level):
         return "<%s %s>" % (
-        self._repr_class(obj, level), self._repr_attrs(obj, level))
+            self._repr_class(obj, level), self._repr_attrs(obj, level))
 
     def _repr_class(self, obj, level):
         return obj.__class__.__name__

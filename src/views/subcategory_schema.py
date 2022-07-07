@@ -31,12 +31,13 @@ class UpdateSubcategorySchema(SubcategorySchema):
 
 
 class SubcategoryFilterSchema(BaseSchema):
+    category_id = fields.UUID(required=False, allow_none=True)
     name = fields.Nested("OperatorSchema", required=False)
 
 
 class SubcategoryFilterRequestSchema(BaseSchema):
-    filter_data = fields.Nested("SubcategoryFilterSchema", required=False)
-    paginate_data = fields.Nested("PaginationSchema", required=True)
+    filter_data = fields.Nested("SubcategoryFilterSchema")
+    paginate_data = fields.Nested("PaginationSchema")
 
 
 class GetAllSubcategoryPaginationDataSchema(BaseSchema):
@@ -62,7 +63,7 @@ class ResponseSubcategoryManySchema(BaseSchema):
 create_subcategory = SubcategorySchema()
 response_one_subcategory_schema = ResponseOneSubcategorySchema()
 update_subcategory_schema = UpdateSubcategorySchema()
-request_subcategory_filter_schema = SubcategoryFilterSchema()
+request_subcategory_filter_schema = SubcategoryFilterRequestSchema()
 get_all_subcategory_data = GetAllSubcategoryPaginateSchema()
 auto_complete_schema = AutoCompleteSchema()
 response_subcategory_many_schema = ResponseSubcategoryManySchema()

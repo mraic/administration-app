@@ -1,7 +1,10 @@
+import warnings
+
 from apispec import APISpec
 from apispec.ext.marshmallow import MarshmallowPlugin
 from flask import Flask
 from flask_apispec import FlaskApiSpec
+from werkzeug.exceptions import default_exceptions
 
 from . import cli
 from .controller import bpp
@@ -10,12 +13,10 @@ from .general import build_error_response, CustomLogException, \
     DefaultAppException, AppLogException
 from .models import *  # This one is important for Alembic auto generated migrations to work
 from .settings import environments
-import warnings
-from werkzeug.exceptions import default_exceptions
 
-from src.controller import category_controller, subcategory_controller,\
+
+from src.controller import category_controller, subcategory_controller, \
     item_controller
-
 
 def marshmallow_swagger_properties(self, field, **kwargs):
     """

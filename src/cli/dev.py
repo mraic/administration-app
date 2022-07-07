@@ -1,8 +1,9 @@
 import click
 import flask
+from flask.cli import with_appcontext
 from sqlalchemy import text
 from sqlalchemy_utils import database_exists, drop_database, create_database
-from flask.cli import with_appcontext
+
 from src.cli.common import confirm_if_not_dev
 
 

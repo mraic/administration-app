@@ -1,8 +1,8 @@
 import functools
 import gzip
+from io import BytesIO as IO
 
 from flask import request, after_this_request
-from io import BytesIO as IO
 
 
 def allow_access(function):

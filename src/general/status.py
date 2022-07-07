@@ -69,3 +69,7 @@ class Status:
     @classmethod
     def item_already_activated(cls):
         return cls(400, 'Item is already activated')
+
+    @classmethod
+    def operator_not_found(cls):
+        return cls(400, "Operator not found")
