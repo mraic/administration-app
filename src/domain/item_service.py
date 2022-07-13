@@ -1,8 +1,12 @@
+from pathlib import Path
+
 from sqlalchemy import and_
 
-from src import Item, AppLogException
+from src import Item, AppLogException, Gallery, db
+from src.domain import SubcategoryService
 from src.general import Status, filter_data_result_with_operator, \
-    filter_data_result_between_two_dates, filter_data_result_between_two_value
+    filter_data_result_between_two_dates, filter_data_result_between_two_value, \
+    import_file
 
 
 class ItemService:
@@ -11,9 +15,21 @@ class ItemService:
         self.item = item
 
     def create(self):
+        from src.domain import ListItemService
 
+        data = SubcategoryService.get_one_by_id(_id=self.item.subcategory_id)
+
+        if data.subcategory is None:
+            raise AppLogException(Status.subcategory_doesnt_exists())
+
+        data_condition = ListItemService.get_one(_id=self.item.condition_id)
+
+        if data_condition.listitem is None:
+            raise AppLogException(Status.condition_doesnt_exists())
+
+        self.item.category_id = str(data.subcategory.category_id)
         self.item.add()
-        self.item.commit_or_rollback()
+        self.item.flush()
 
         return Status.successfully_processed()
 
@@ -48,7 +64,7 @@ class ItemService:
             raise AppLogException(Status.item_does_not_exists())
 
         if data.item.status == Item.STATUSES.inactive:
-            raise AppLogException(Status.item_is_not_activated)
+            raise AppLogException(Status.item_is_not_activated())
 
         data.item.status = Item.STATUSES.inactive
 
@@ -146,4 +162,41 @@ class ItemService:
 
         data = Item.query.autocomplete(search=search)
 
-        return data, Status.successfully_processed().message
+        return data, Status.successfully_processed()
+
+    @staticmethod
+    def create_with_gallery(params, file):
+
+        from src.domain import GalleryService
+        try:
+            item_service = ItemService(
+                item=Item(
+                    name=params.get('name'),
+                    price=params.get('price'),
+                    description=params.get('description'),
+                    condition_id=params.get('condition_id'),
+                    subcategory_id=params.get('subcategory_id')))
+            status = item_service.create()
+
+            Path('static/items/' + str(
+                item_service.item.id)).mkdir(parents=True, exist_ok=True)
+            extension = file.filename.rsplit(".", 1)[1]
+            new_file_name = str(item_service.item.id) + '.' + extension
+            path = 'static/items/' + str(item_service.item.id) + '/'
+
+            import_file(path=path, file=file, file_name=new_file_name)
+
+            gallery_service = GalleryService(
+                gallery=Gallery(
+                    path='/' + path + new_file_name,
+                    main_photo='test',
+                    items_id=item_service.item.id
+                ))
+            gallery_service.create()
+
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            raise e
+
+        return dict(message=status.message, data=item_service.item)

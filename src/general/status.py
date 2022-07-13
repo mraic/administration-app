@@ -73,3 +73,15 @@ class Status:
     @classmethod
     def operator_not_found(cls):
         return cls(400, "Operator not found")
+
+    @classmethod
+    def error_on_loading_file(cls):
+        return cls(400, "Error on loading file")
+
+    @classmethod
+    def gallery_does_not_exists(cls):
+        return cls(400, "Gallery does not exists")
+
+    @classmethod
+    def condition_doesnt_exists(cls):
+        return cls(400, "Condition doesnt exists")

@@ -23,11 +23,12 @@ class ItemSchema(BaseSchema):
     updated_at = fields.DateTime(dump_only=True)
     subcategory_id = fields.UUID(required=True)
     category_id = fields.UUID(dump_only=True)
-
+    file = fields.Raw(type='file', required=False, allow_none=True)
 
 class ItemFullSchema(ItemSchema):
     subcategory = fields.Nested("SubcategorySchema")
     category = fields.Nested("CategorySchema")
+    gallery = fields.Nested("GallerySchema")
 
 
 class ItemResponseSchema(BaseSchema):

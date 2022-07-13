@@ -78,6 +78,8 @@ def build_and_log_error_dict(exception, message=None):
     elif isinstance(exception, UnprocessableEntity):
         if exception.data['messages'].get('json', None):
             error = exception.data['messages']['json']
+        elif exception.data['messages'].get('form', None):
+            error = exception.data['messages']['form']
         else:
             error = exception.data['messages']['query']
 

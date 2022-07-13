@@ -6,7 +6,19 @@ from sqlalchemy import orm
 from sqlalchemy.dialects.postgresql import UUID
 
 from src import db
-from src.models.common import BaseModelMixin, ModelsMixin
+from src.models.common import BaseModelMixin, ModelsMixin, BaseQueryMixin
+
+
+class ListItemQuery(BaseQueryMixin, db.Query):
+
+    def get_one(self, _id):
+        try:
+            return self.filter(
+                ListItem.id == _id
+            ).first()
+        except Exception as e:
+            db.session.rollback()
+            raise e
 
 
 class ListItemStatus(enum.Enum):
@@ -16,6 +28,7 @@ class ListItemStatus(enum.Enum):
 
 class ListItem(BaseModelMixin, ModelsMixin, db.Model):
     __tablename__ = "listitems"
+    query_class = ListItemQuery
 
     id = sa.Column(UUID(as_uuid=True), default=uuid4, primary_key=True)
     name = sa.Column(sa.String(length=255), nullable=False)

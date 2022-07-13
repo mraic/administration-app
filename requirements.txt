@@ -6,7 +6,7 @@
 #
 alembic==1.7.7
     # via flask-migrate
-apispec[yaml]==5.1.1
+apispec[yaml]==5.2.2
     # via
     #   -r requirements.in
     #   apispec-webframeworks

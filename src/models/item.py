@@ -2,7 +2,7 @@ import enum
 from uuid import uuid4
 
 import sqlalchemy as sa
-from sqlalchemy import or_, asc
+from sqlalchemy import or_
 from sqlalchemy import orm
 from sqlalchemy.dialects.postgresql import UUID
 
@@ -16,7 +16,7 @@ class ItemQuery(BaseModelMixin, db.Query):
         try:
             return self.filter(
                 Item.id == _id
-            ).first is not None
+            ).first
         except Exception as e:
             db.session.rollback()
             raise e
@@ -36,14 +36,39 @@ class ItemQuery(BaseModelMixin, db.Query):
             db.session.rollback()
             raise e
 
+    @staticmethod
+    def get_gallery_for_item(_id):
+        try:
+            from src.models import Gallery
+
+            subquery = db.session.query(
+                Gallery.id == _id
+            ).all(
+            ).order_by(
+                'main_photo'
+            ).subquery()
+
+            return db.session.query(
+                Item, subquery
+            ).join(
+                subquery,
+                Item.id == subquery.c.items_id,
+                itouter=True
+            ).order_by(
+                Item.status
+            )
+        except Exception as e:
+            db.session.rollback()
+            raise e
+
     def autocomplete(self, search):
         try:
-            return not self.filter(
+            return self.filter(
                 Item.status == Item.STATUSES.active,
                 or_(
                     Item.name.ilike('%' + search + '%')
                 )
-            ).all()
+            ).all() is not None
         except Exception as e:
             db.session.rollback()
             raise e

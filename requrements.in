@@ -25,7 +25,7 @@ requests ~= 2.27.0
 
 # OpenAPI
 marshmallow ~= 3.14.0
-apispec[yaml] ~= 5.1.0
+apispec[yaml] ~= 5.2.2
 marshmallow_enum ~= 1.5.1
 
 # datetime

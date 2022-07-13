@@ -1,32 +1,27 @@
+from flask import request
 from flask_apispec import doc, use_kwargs, marshal_with
 
 from src import bpp, Item
 from src.domain.item_service import ItemService
+from src.general import Status
 from src.views.item_schema import item_response_one_schema, create_item_schema, \
-    update_item_schema, auto_complete_schema, response_item_many_schema, \
-    request_item_filter_schema, get_all_items_schema
+    update_item_schema, request_item_filter_schema, get_all_items_schema, \
+    auto_complete_schema, response_item_many_schema
 from src.views.message_schema import message_response_schema
 
 
 @doc(description='Create item route', tags=['Item'])
 @bpp.post('/items')
-@use_kwargs(create_item_schema, apply=True)
+@use_kwargs(create_item_schema, 'form', apply=True)
 @marshal_with(item_response_one_schema, 200, apply=True)
 @marshal_with(message_response_schema, 400, apply=True)
 def create_item(**kwargs):
-    item_service = ItemService(
-        item=Item(
-            name=kwargs.get('name'),
-            description=kwargs.get('description'),
-            price=kwargs.get('price'),
-            condition_id=kwargs.get('condition_id'),
-            subcategory_id=kwargs.get('subcategory_id')
-        )
+    ItemService.create_with_gallery(
+        params=kwargs,
+        file=request.files.get('file')
     )
 
-    status = item_service.create()
-
-    return dict(message=status.message, data=item_service.item)
+    return Status.successfully_processed()
 
 
 @doc(description='Alter item route', tags=['Item'])
@@ -71,13 +66,13 @@ def deactivate_item(item_id):
 
     return dict(message=status.message, data=item_service.item)
 
+
 @doc(description='Item paginate route', tags=['Item'])
 @bpp.post('/items/paginate/')
 @use_kwargs(request_item_filter_schema, apply=True)
 @marshal_with(get_all_items_schema, 200, apply=True)
 @marshal_with(message_response_schema, 400, apply=True)
 def item_paginate(**kwargs):
-
     filter_data = kwargs.get('filter_data')
     paginate_data = kwargs.get('paginate_data')
 
@@ -87,7 +82,6 @@ def item_paginate(**kwargs):
 
     return dict(data=dict(items=items, total=total),
                 status=status.message)
-
 
 
 @doc(description='Autocomplete item route', tags=['Item'])

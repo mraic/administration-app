@@ -9,7 +9,15 @@ from src.models.common import BaseQueryMixin, ModelsMixin, BaseModelMixin
 
 
 class GalleryQuery(BaseQueryMixin, db.Query):
-    pass
+
+    def get_one(self, _id):
+        try:
+            return self.filter(
+                Gallery.id == _id
+            ).first()
+        except Exception as e:
+            db.session.rollback()
+            raise e
 
 
 class Gallery(BaseModelMixin, ModelsMixin, db.Model):
@@ -18,6 +26,7 @@ class Gallery(BaseModelMixin, ModelsMixin, db.Model):
 
     id = sa.Column(UUID(as_uuid=True), default=uuid4, primary_key=True)
     main_photo = sa.Column(sa.String(255), nullable=False)
+    path = sa.Column(sa.String(255), nullable=False)
 
     items_id = db.Column(UUID(as_uuid=True),
                          db.ForeignKey('items.id',
