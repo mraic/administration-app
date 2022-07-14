@@ -10,10 +10,16 @@ class SubcategoryService:
     def __init__(self, subcategory=Subcategory()):
         self.subcategory = subcategory
 
-    def create(self):
+    @staticmethod
+    def get(_id):
 
-        if self.subcategory.name == '':
-            raise AppLogException(Status.subcategory_cant_be_blank())
+        data = SubcategoryService.get_one_by_id(_id=_id)
+        if data.subcategory is not None:
+            return Subcategory.query.get_one_by_id(_id=_id)
+        else:
+            raise AppLogException(Status.subcategory_doesnt_exists())
+
+    def create(self):
 
         if SubcategoryService.check_if_subcategory_exists(
                 name=self.subcategory.name):

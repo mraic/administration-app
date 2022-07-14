@@ -19,6 +19,16 @@ class GalleryQuery(BaseQueryMixin, db.Query):
             db.session.rollback()
             raise e
 
+    def delete_all_by_item_exclude_this(self, item_id, gallery_for_exclude):
+        try:
+            return self.filter(
+                Gallery.items_id == item_id,
+                Gallery.id != gallery_for_exclude
+            ).delete()
+        except Exception as e:
+            db.session.rollback()
+            raise e
+
 
 class Gallery(BaseModelMixin, ModelsMixin, db.Model):
     __tablename__ = 'galleries'

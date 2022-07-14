@@ -15,8 +15,9 @@ class ItemQuery(BaseModelMixin, db.Query):
     def get_one_by_id(self, _id):
         try:
             return self.filter(
-                Item.id == _id
-            ).first
+                Item.id == _id,
+                Item.status == Item.STATUSES.active
+            ).first()
         except Exception as e:
             db.session.rollback()
             raise e
@@ -36,30 +37,7 @@ class ItemQuery(BaseModelMixin, db.Query):
             db.session.rollback()
             raise e
 
-    @staticmethod
-    def get_gallery_for_item(_id):
-        try:
-            from src.models import Gallery
 
-            subquery = db.session.query(
-                Gallery.id == _id
-            ).all(
-            ).order_by(
-                'main_photo'
-            ).subquery()
-
-            return db.session.query(
-                Item, subquery
-            ).join(
-                subquery,
-                Item.id == subquery.c.items_id,
-                itouter=True
-            ).order_by(
-                Item.status
-            )
-        except Exception as e:
-            db.session.rollback()
-            raise e
 
     def autocomplete(self, search):
         try:

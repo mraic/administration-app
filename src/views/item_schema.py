@@ -24,11 +24,13 @@ class ItemSchema(BaseSchema):
     subcategory_id = fields.UUID(required=True)
     category_id = fields.UUID(dump_only=True)
     file = fields.Raw(type='file', required=False, allow_none=True)
+    gallery = fields.Nested("GallerySchema", many=True, dump_only=True)
+
 
 class ItemFullSchema(ItemSchema):
     subcategory = fields.Nested("SubcategorySchema")
     category = fields.Nested("CategorySchema")
-    gallery = fields.Nested("GallerySchema")
+    gallery = fields.Nested("GallerySchema", many=True)
 
 
 class ItemResponseSchema(BaseSchema):
@@ -40,7 +42,7 @@ class UpdateItemSchema(ItemSchema):
     class Meta:
         items = fields.Nested("BaseSchema", dump_only=True)
         message = fields.String(dump_only=True)
-        fields = ('name', 'description', 'price', 'condition_id')
+        fields = ('name', 'description', 'price', 'condition_id', 'file')
 
 
 class AutoCompleteSchema(BaseSchema):

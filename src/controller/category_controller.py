@@ -2,12 +2,23 @@ from flask_apispec import doc, use_kwargs, marshal_with
 
 from src import bpp, Category
 from src.domain.category_service import CategoryService
+from src.general import Status
 from src.views.category_schema import category_schema, \
     category_response_one_schema, update_category_schema, \
     request_category_filter_schema, get_all_category_data, auto_complete_schema, \
-    response_category_many_schema, category_response_full_schema
+    response_category_many_schema
 from src.views.message_schema import message_response_schema
 
+
+@doc(description='Get category route', tags=['Category'])
+@bpp.get('/categories/<uuid:category_id>')
+@marshal_with(category_response_one_schema, 200, apply=True)
+@marshal_with(message_response_schema, 400, apply=True)
+def get_categories(category_id):
+    category_service = CategoryService.get_one_by_id(_id=category_id)
+    category_service.get(_id=category_id)
+    return (dict(data=category_service.category,
+                 message=Status.successfully_processed().message))
 
 
 @doc(description='Create category route', tags=['Category'])

@@ -14,13 +14,14 @@ class CategorySchema(BaseSchema):
     status = EnumField(Category.STATUSES, by_value=True, dump_only=True)
     created_at = fields.DateTime(dump_only=True)
     updated_at = fields.DateTime(dump_only=True)
+    subcategory = fields.Nested("SubcategorySchema", dump_only=True, many=True)
 
 
 class UpdateCategorySchema(CategorySchema):
     class Meta:
         items = fields.Nested("BaseSchema", dump_only=True)
         message = fields.String(dump_only=True)
-        fields = ('name', 'category_icon' , 'state', 'status')
+        fields = ('name', 'category_icon', 'state', 'status')
 
 
 class CategoryResponseSchema(BaseSchema):
@@ -62,12 +63,15 @@ class ResponseCategoryManySchema(BaseSchema):
     data = fields.Nested("CategorySchema", many=True, dump_only=True)
     message = fields.String(dump_only=True)
 
+
 class CategoryFullSchema(CategorySchema):
     subcategory = fields.Nested("SubcategorySchema")
+
 
 class CategoryResponseFullSchema(BaseSchema):
     data = fields.Nested("CategoryFullSchema", many=True, dump_only=True)
     message = fields.String(dump_only=True)
+
 
 category_schema = CategorySchema()
 category_response_one_schema = CategoryResponseSchema()

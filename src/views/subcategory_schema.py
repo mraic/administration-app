@@ -16,6 +16,7 @@ class SubcategorySchema(BaseSchema):
     state = EnumField(Subcategory.STATES, by_value=True, dump_only=True)
     created_at = fields.DateTime(dump_only=True)
     updated_at = fields.DateTime(dump_only=True)
+    items = fields.Nested("ItemSchema", dump_only=True, many=True)
 
 
 class ResponseOneSubcategorySchema(BaseSchema):

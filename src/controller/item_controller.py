@@ -10,6 +10,16 @@ from src.views.item_schema import item_response_one_schema, create_item_schema, 
 from src.views.message_schema import message_response_schema
 
 
+@doc(description='Get item route', tags=['Item'])
+@bpp.get('/items/<uuid:item_id>')
+@marshal_with(item_response_one_schema, 200, apply=True)
+@marshal_with(message_response_schema, 400, apply=True)
+def get_item_by_id(item_id):
+    item_service = ItemService.get_one_by_id(_id=item_id)
+    item_service.get(_id=item_id)
+    return dict(data=item_service.item, message=Status.successfully_processed())
+
+
 @doc(description='Create item route', tags=['Item'])
 @bpp.post('/items')
 @use_kwargs(create_item_schema, 'form', apply=True)
@@ -26,23 +36,16 @@ def create_item(**kwargs):
 
 @doc(description='Alter item route', tags=['Item'])
 @bpp.put('/items/<uuid:item_id>')
-@use_kwargs(update_item_schema, apply=True)
+@use_kwargs(update_item_schema, 'form', apply=True)
 @marshal_with(item_response_one_schema, 200, apply=True)
 @marshal_with(message_response_schema, 400, apply=True)
 def alter_item(item_id, **kwargs):
-    item_service = ItemService(
-        item=Item(
-            id=item_id,
-            name=kwargs.get('name'),
-            description=kwargs.get('description'),
-            price=kwargs.get('price'),
-            condition=kwargs.get('condition'),
-        )
-    )
+    ItemService.alter_with_gallery(
+        _id=item_id,
+        params=kwargs,
+        file=request.files.get('file'))
 
-    status = item_service.alter()
-
-    return dict(message=status.message, data=item_service.item)
+    return Status.successfully_processed()
 
 
 @doc(description='Activate item route', tags=['Item'])

@@ -2,12 +2,24 @@ from flask_apispec import doc, use_kwargs, marshal_with
 
 from src import bpp, Subcategory
 from src.domain.subcategory_service import SubcategoryService
-
+from src.general import Status
 from src.views.message_schema import message_response_schema
 from src.views.subcategory_schema import response_one_subcategory_schema, \
     create_subcategory, update_subcategory_schema, \
     response_subcategory_many_schema, auto_complete_schema, \
     request_subcategory_filter_schema, get_all_subcategory_data
+
+
+@doc(description="Get subcategory route", tags=['Subcategory'])
+@bpp.get('/subcategory/<uuid:subcategory_id>')
+@marshal_with(response_one_subcategory_schema, 200, apply=True)
+@marshal_with(message_response_schema, 400, apply=True)
+def get_subcategories(subcategory_id):
+    subcategory_service = SubcategoryService.get_one_by_id(_id=subcategory_id)
+    subcategory_service.get(_id=subcategory_id)
+
+    return dict(data=subcategory_service.subcategory,
+                message=Status.successfully_processed().message)
 
 
 @doc(description="Create subcategory route", tags=['Subcategory'])
@@ -93,7 +105,6 @@ def deactivate_subcategory(subcategory_id):
 @marshal_with(get_all_subcategory_data, 200, apply=True)
 @marshal_with(message_response_schema, 400, apply=True)
 def get_subcategory(**kwargs):
-
     filter_data = kwargs.get('filter_data')
     paginate_data = kwargs.get('paginate_data')
 

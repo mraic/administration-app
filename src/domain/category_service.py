@@ -9,6 +9,16 @@ class CategoryService:
     def __init__(self, category=Category()):
         self.category = category
 
+    @staticmethod
+    def get(_id):
+
+        data = CategoryService.get_one_by_id(_id=_id)
+        if data.category is not None:
+            return Category.query.get_one_by_id(
+                _id=_id)
+        else:
+            return Status.category_does_not_exists()
+
     def create(self):
 
         if self.category.name == '':
@@ -119,15 +129,6 @@ class CategoryService:
 
         return Status.successfully_processed()
 
-    def get(self):
-
-        data = CategoryService.get_one_by_id(_id=self.category.id)
-
-        if data.category is None:
-            raise AppLogException(Status.category_does_not_exists())
-
-        return Status.successfully_processed()
-
     @classmethod
     def get_one_by_id(cls, _id):
         return cls(category=Category.query.get_one_by_id(_id=_id))
@@ -139,7 +140,6 @@ class CategoryService:
     @staticmethod
     def check_if_name_exists(name):
         return Category.query.check_if_name_exists(name=name)
-    
 
     @staticmethod
     def get_all_categories(filter_data, paginate_data):

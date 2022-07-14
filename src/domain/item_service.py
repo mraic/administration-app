@@ -14,6 +14,15 @@ class ItemService:
     def __init__(self, item=Item()):
         self.item = item
 
+    @staticmethod
+    def get(_id):
+
+        data = ItemService.get_one_by_id(_id=_id)
+        if data.item is not None:
+            return Item.query.get_one_by_id(_id=_id)
+        else:
+            raise AppLogException(Status.item_does_not_exists())
+
     def create(self):
         from src.domain import ListItemService
 
@@ -35,6 +44,8 @@ class ItemService:
 
     def alter(self):
 
+        from src.domain import ListItemService
+
         data = ItemService.get_one_by_id(_id=self.item.id)
 
         if data.item is None:
@@ -43,14 +54,18 @@ class ItemService:
         if data.item.status == Item.STATUSES.inactive:
             raise AppLogException(Status.item_is_not_activated())
 
-        if not self.item.name == '':
-            data.item.name = self.item.name
+        data_condition = ListItemService.get_one(_id=self.item.condition_id)
+
+        if data_condition.listitem is None:
+            raise AppLogException(Status.condition_doesnt_exists())
+
+        data.item.name = self.item.name
         data.item.description = self.item.description
         data.item.price = self.item.price
-        data.item.condition = self.item.condition
+        data.item.condition_id = self.item.condition_id
 
-        self.item.update()
-        self.item.commit_or_rollback()
+        data.item.update()
+        data.item.flush()
 
         self.item = data.item
 
@@ -166,7 +181,6 @@ class ItemService:
 
     @staticmethod
     def create_with_gallery(params, file):
-
         from src.domain import GalleryService
         try:
             item_service = ItemService(
@@ -193,6 +207,48 @@ class ItemService:
                     items_id=item_service.item.id
                 ))
             gallery_service.create()
+
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            raise e
+
+        return dict(message=status.message, data=item_service.item)
+
+    @staticmethod
+    def alter_with_gallery(_id, params, file):
+        from src.domain import GalleryService
+        try:
+            item_service = ItemService(
+                item=Item(
+                    id=_id,
+                    name=params.get('name'),
+                    price=params.get('price'),
+                    description=params.get('description'),
+                    condition_id=params.get('condition_id')))
+
+            status = item_service.alter()
+
+            Path('static/items/' + str(
+                item_service.item.id)).mkdir(parents=True, exist_ok=True)
+            extension = file.filename.rsplit(".", 1)[1]
+            new_file_name = str(item_service.item.id) + '.' + extension
+            path = 'static/items/' + str(item_service.item.id) + '/'
+
+            import_file(path=path, file=file, file_name=new_file_name)
+
+            gallery_service = GalleryService(
+                gallery=Gallery(
+                    path='/' + path + new_file_name,
+                    main_photo='test',
+                    items_id=item_service.item.id
+                ))
+            gallery_service.create()
+
+            GalleryService.delete_all_by_item_without_this(
+                item_id=item_service.item.id,
+                gallery_for_exclude=gallery_service.gallery.id
+            )
 
             db.session.commit()
         except Exception as e:

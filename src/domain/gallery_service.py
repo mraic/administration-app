@@ -19,6 +19,7 @@ class GalleryService:
         if data.gallery is None:
             raise AppLogException(Status.gallery_does_not_exists())
 
+        self.gallery = data.gallery
         self.gallery.update()
         self.gallery.commit_or_rollback()
 
@@ -27,3 +28,10 @@ class GalleryService:
     @classmethod
     def get_one(cls, _id):
         return cls(gallery=Gallery.query.get_one(_id=_id))
+
+    @staticmethod
+    def delete_all_by_item_without_this(
+            item_id, gallery_for_exclude):
+        Gallery.query.delete_all_by_item_exclude_this(
+            item_id=item_id, gallery_for_exclude=gallery_for_exclude
+        )
