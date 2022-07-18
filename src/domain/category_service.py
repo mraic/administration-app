@@ -17,7 +17,7 @@ class CategoryService:
             return Category.query.get_one_by_id(
                 _id=_id)
         else:
-            return Status.category_does_not_exists()
+            return AppLogException(Status.category_does_not_exists())
 
     def create(self):
 
@@ -39,7 +39,6 @@ class CategoryService:
 
         self.category.add()
         self.category.commit_or_rollback()
-
         return Status.successfully_processed()
 
     def alter(self):

@@ -1,0 +1,1 @@
+from .category_controller_test import TestCategoryController

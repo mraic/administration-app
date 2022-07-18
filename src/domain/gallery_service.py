@@ -8,6 +8,9 @@ class GalleryService:
         self.gallery = gallery
 
     def create(self):
+        data = GalleryService(gallery=self.gallery.items_id)
+        if data.gallery.items_id is None:
+            raise AppLogException(Status.item_does_not_exists())
         self.gallery.add()
         self.gallery.flush()
 
