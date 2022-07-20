@@ -192,21 +192,22 @@ class ItemService:
                     subcategory_id=params.get('subcategory_id')))
             status = item_service.create()
 
-            Path('static/items/' + str(
-                item_service.item.id)).mkdir(parents=True, exist_ok=True)
-            extension = file.filename.rsplit(".", 1)[1]
-            new_file_name = str(item_service.item.id) + '.' + extension
-            path = 'static/items/' + str(item_service.item.id) + '/'
+            if file:
+                Path('static/items/' + str(
+                    item_service.item.id)).mkdir(parents=True, exist_ok=True)
+                extension = file.filename.rsplit(".", 1)[1]
+                new_file_name = str(item_service.item.id) + '.' + extension
+                path = 'static/items/' + str(item_service.item.id) + '/'
 
-            import_file(path=path, file=file, file_name=new_file_name)
+                import_file(path=path, file=file, file_name=new_file_name)
 
-            gallery_service = GalleryService(
-                gallery=Gallery(
-                    path='/' + path + new_file_name,
-                    main_photo='test',
-                    items_id=item_service.item.id
-                ))
-            gallery_service.create()
+                gallery_service = GalleryService(
+                    gallery=Gallery(
+                        path='/' + path + new_file_name,
+                        main_photo='test',
+                        items_id=item_service.item.id
+                    ))
+                gallery_service.create()
 
             db.session.commit()
         except Exception as e:

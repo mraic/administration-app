@@ -26,12 +26,11 @@ def get_item_by_id(item_id):
 @marshal_with(item_response_one_schema, 200, apply=True)
 @marshal_with(message_response_schema, 400, apply=True)
 def create_item(**kwargs):
-    ItemService.create_with_gallery(
+    data = ItemService.create_with_gallery(
         params=kwargs,
         file=request.files.get('file')
     )
-
-    return Status.successfully_processed()
+    return data
 
 
 @doc(description='Alter item route', tags=['Item'])
@@ -49,7 +48,7 @@ def alter_item(item_id, **kwargs):
 
 
 @doc(description='Activate item route', tags=['Item'])
-@bpp.post('/items/activate/<uuid:category_id>')
+@bpp.post('/items/activate/<uuid:item_id>')
 @marshal_with(item_response_one_schema, 200, apply=True)
 @marshal_with(message_response_schema, 400, apply=True)
 def activate_item(item_id):

@@ -21,13 +21,15 @@ class CategoryService:
 
     def create(self):
 
+        from pathlib import Path
+
         if self.category.name == '':
             raise AppLogException(Status.category_has_no_name())
 
-        ime = self.category.name.split()
+        name_ = self.category.name.split()
 
-        if len(ime) > 1:
-            self.category.name = "-".join(ime).lower()
+        if len(name_) > 1:
+            self.category.name = "-".join(name_).lower()
 
         if CategoryService.check_if_name_exists(name=self.category.name):
             raise AppLogException(Status.category_exists())
@@ -35,7 +37,10 @@ class CategoryService:
         self.category.category_icon = \
             "/static/category_icon/{}".format(self.category.name)
 
-        # os.makedirs("/static/category_icon/{}".format(self.category.name))
+        Path('static/category_icon/' + str(
+            self.category.id)).mkdir(parents=True, exist_ok=True)
+        self.category.category_icon = 'static/category_icon/' + str(
+            self.category.id) + '/'
 
         self.category.add()
         self.category.commit_or_rollback()

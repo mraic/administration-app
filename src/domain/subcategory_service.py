@@ -46,7 +46,7 @@ class SubcategoryService:
         data_category = \
             CategoryService.get_one_by_id(_id=self.subcategory.category_id)
 
-        if data_category is True:
+        if data_category is not None:
             data.subcategory.category_id = self.subcategory.category_id
         else:
             raise AppLogException(Status.category_does_not_exists())

@@ -26,26 +26,6 @@ class TestSubcategoryServices:
 
         assert status.message == Status.successfully_processed().message
 
-    def test_create_empty_name(self, db, mocker):
-        mock_check_subcategory = mocker.patch(
-            "src.domain.subcategory_service.SubcategoryService."
-            "check_if_subcategory_exists", autospec=True
-        )
-
-        mock_check_subcategory.return_value = False
-
-        data = copy.deepcopy(self.dummy_subcategory)
-        data.name = ''
-
-        subcategory_domain = \
-            SubcategoryService(subcategory=data)
-
-        with pytest.raises(AppLogException) as ape:
-            subcategory_domain.create()
-
-        assert ape.value.status.message == \
-               Status.subcategory_cant_be_blank().message
-
     def test_create_subcategory_exists(self, db, mocker):
         mock_check_subcategory = mocker.patch(
             "src.domain.subcategory_service.SubcategoryService."

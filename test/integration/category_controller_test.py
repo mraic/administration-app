@@ -72,11 +72,17 @@ class TestCategoryController:
 
     @pytest.mark.run(order=5)
     def test_alter_category(self, client):
+        from src import db
+        from src import Category
+
         response = json.loads(self.create_category.data)
 
         json_data = {
             "name": response['data']['name']
         }
+        x = db.session.query(Category).filter(
+            Category.name == response['data']['name']).first()
+        x.status = Category.STATUSES.active
 
         response = client.put(
             "/categories/{}".format(response['data']['id']),
@@ -93,9 +99,40 @@ class TestCategoryController:
                Status.successfully_processed().message
         assert response.status_code == 200
 
+    @pytest.mark.run(order=5)
+    def test_category_deactivate(self, client):
+        from src import db, Category
+        response = json.loads(self.create_category.data)
+
+        x = db.session.query(Category).filter(
+            Category.name == response['data']['name']).first()
+        x.status = Category.STATUSES.active
+
+        response = client.post(
+            '/categories/deactivate/{}'.format(
+                response['data']['id']),
+            headers={
+                "Content-Type": "application/json"
+            }
+        )
+
+        deactivate_response_data = json.loads(response.data)
+        assert 'data' in deactivate_response_data
+        assert 'message' in deactivate_response_data
+        assert deactivate_response_data['message'] == \
+               Status.successfully_processed().message
+        assert deactivate_response_data['data']['state'] == 'inactive'
+
     @pytest.mark.run(order=6)
     def test_category_activate(self, client):
+        from src import db, Category
+
         response = json.loads(self.create_category.data)
+
+        x = db.session.query(Category).filter(
+            Category.name == response['data']['name']).first()
+        x.status = Category.STATUSES.active
+        x.state = Category.STATES.inactive
 
         response = client.post(
             '/categories/activate/{}'.format(
@@ -110,4 +147,32 @@ class TestCategoryController:
         assert 'message' in post_response_data
         assert post_response_data['message'] == \
                Status.successfully_processed().message
-        assert post_response_data['state'] == 1
+        assert post_response_data['data']['state'] == 'active'
+
+    @pytest.mark.run(order=7)
+    def test_category_pagination(self, client):
+        json_data = {
+            "filter_data": {
+                "name": {
+                    "operator": "CONTAINS",
+                    "value": ""
+                }
+            },
+            "paginate_data": {
+                "length": 10,
+                "start": 1
+            }
+        }
+
+        response = client.post(
+            '/category/paginate',
+            json=json_data,
+            headers={
+                "Content-Type": "application/json"
+            },
+        )
+
+        post_paginate_data = json.loads(response.data)
+        assert 'data' in post_paginate_data
+        assert post_paginate_data['data']['total'] > 0
+        assert response.status_code == 200

@@ -20,8 +20,7 @@ def dummy_category(request):
 
 
 @pytest.fixture(scope="class")
-def create_category(
-        client, dummy_category, request):
+def create_category( client, dummy_category, request):
     json_data = {
         "name": dummy_category.name,
         "category_icon": dummy_category.category_icon
