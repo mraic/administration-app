@@ -78,7 +78,8 @@ class TestCategoryController:
         response = json.loads(self.create_category.data)
 
         json_data = {
-            "name": response['data']['name']
+            "name": response['data']['name'],
+            "category_icon": response['data']['category_icon']
         }
         x = db.session.query(Category).filter(
             Category.name == response['data']['name']).first()

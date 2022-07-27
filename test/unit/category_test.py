@@ -45,24 +45,6 @@ class TestCategoryServices:
         assert ape.value.status.message == \
                Status.category_exists().message
 
-    def test_create_no_name(self, db, mocker):
-        mock_category_get_one = mocker.patch(
-            "src.domain.category_service.CategoryService."
-            "get_one_by_name", autospec=True
-        )
-
-        data = copy.deepcopy(self.dummy_category)
-        data.name = ''
-
-        mock_category_get_one.return_value = CategoryService(category=data)
-
-        category_domain = CategoryService(category=data)
-
-        with pytest.raises(AppLogException) as ape:
-            category_domain.create()
-
-        assert ape.value.status.message == Status.category_has_no_name().message
-
     def test_alter_category(self, db, mocker):
         mock_category_get_one_by_id = mocker.patch(
             "src.domain.category_service.CategoryService."
@@ -71,6 +53,14 @@ class TestCategoryServices:
 
         mock_category_get_one_by_id.return_value = \
             CategoryService(category=self.dummy_category)
+
+        mock_check_if_category_exists = mocker.patch(
+            "src.domain.category_service.CategoryService."
+            "check_if_category_exists", autospec=True
+        )
+
+        mock_check_if_category_exists.return_value = \
+            CategoryService(category=None)
 
         category_domain = CategoryService(category=self.dummy_category)
         category_status = category_domain.alter()
@@ -86,6 +76,14 @@ class TestCategoryServices:
 
         mock_category_get_ony_by_id.return_value = \
             CategoryService(category=None)
+
+        mock_check_if_category_exists = mocker.patch(
+            "src.domain.category_service.CategoryService."
+            "check_if_category_exists", autospec=True
+        )
+
+        mock_check_if_category_exists.return_value = \
+            CategoryService(category=True)
 
         category_domain = CategoryService(category=self.dummy_category)
 
@@ -107,6 +105,14 @@ class TestCategoryServices:
         mock_category_get_ony_by_id.return_value = \
             CategoryService(category=data)
 
+        mock_check_if_category_exists = mocker.patch(
+            "src.domain.category_service.CategoryService."
+            "check_if_category_exists", autospec=True
+        )
+
+        mock_check_if_category_exists.return_value = \
+            CategoryService(category=True)
+
         category_domain = CategoryService(category=self.dummy_category)
 
         with pytest.raises(AppLogException) as ape:
@@ -126,7 +132,7 @@ class TestCategoryServices:
 
         category_domain = CategoryService(category=self.dummy_category)
 
-        category_status = category_domain.delete(_id=self.dummy_category.id)
+        category_status = category_domain.delete()
 
         assert category_status.message == \
                Status.successfully_processed().message
@@ -139,6 +145,14 @@ class TestCategoryServices:
 
         mock_category_get_ony_by_id.return_value = \
             CategoryService(category=None)
+
+        mock_check_if_category_exists = mocker.patch(
+            "src.domain.category_service.CategoryService."
+            "check_if_category_exists", autospec=True
+        )
+
+        mock_check_if_category_exists.return_value = \
+            CategoryService(category=False)
 
         category_domain = CategoryService(category=self.dummy_category)
 
@@ -162,7 +176,7 @@ class TestCategoryServices:
 
         category_domain = CategoryService(category=self.dummy_category)
 
-        category_status = category_domain.activate(_id=self.dummy_category.id)
+        category_status = category_domain.activate()
 
         assert category_status.message == \
                Status.successfully_processed().message
@@ -179,7 +193,7 @@ class TestCategoryServices:
         category_domain = CategoryService(category=self.dummy_category)
 
         with pytest.raises(AppLogException) as ape:
-            category_domain.activate(_id=self.dummy_category)
+            category_domain.activate()
 
         assert ape.value.status.message == \
                Status.category_does_not_exists().message
@@ -199,7 +213,7 @@ class TestCategoryServices:
         category_domain = CategoryService(category=self.dummy_category)
 
         with pytest.raises(AppLogException) as ape:
-            category_domain.activate(_id=data.id)
+            category_domain.activate()
 
         assert ape.value.status.message == \
                Status.category_is_not_activated().message
@@ -223,7 +237,7 @@ class TestCategoryServices:
         category_domain = CategoryService(category=data_)
 
         with pytest.raises(AppLogException) as ape:
-            category_domain.activate(_id=data.id)
+            category_domain.activate()
 
         assert ape.value.status.message == \
                Status.category_already_activated().message
@@ -242,7 +256,7 @@ class TestCategoryServices:
 
         category_domain = CategoryService(category=self.dummy_category)
 
-        category_status = category_domain.deactivate(_id=self.dummy_category)
+        category_status = category_domain.deactivate()
 
         assert category_status.message == \
                Status.successfully_processed().message
@@ -259,7 +273,7 @@ class TestCategoryServices:
         category_domain = CategoryService(category=self.dummy_category)
 
         with pytest.raises(AppLogException) as ape:
-            category_domain.deactivate(_id=self.dummy_category.id)
+            category_domain.deactivate()
 
         assert ape.value.status.message == \
                Status.category_does_not_exists().message
@@ -279,7 +293,7 @@ class TestCategoryServices:
         category_domain = CategoryService(category=self.dummy_category)
 
         with pytest.raises(AppLogException) as ape:
-            category_domain.deactivate(_id=data.id)
+            category_domain.deactivate()
 
         assert ape.value.status.message == \
                Status.category_is_not_activated().message

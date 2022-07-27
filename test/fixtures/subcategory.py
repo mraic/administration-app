@@ -23,7 +23,7 @@ def create_subcategory(client, dummy_subcategory, dummy_category, request):
     json_data = {
         "name": dummy_subcategory.name,
         "subcategory_icon": dummy_subcategory.subcategory_icon,
-        "category_id": "59dc8d86-d5ce-4aea-88b3-75d1744ab6ed"
+        "category_id": "00c61aee-17a8-4a0f-be98-1253ccd01f30"
     }
 
     response = client.post(

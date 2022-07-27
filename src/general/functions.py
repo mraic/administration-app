@@ -138,26 +138,6 @@ def filter_data_result_between_two_dates(
     return filter_main
 
 
-def filter_data_by_condition(filter_name=None, attribute=None,
-                             filter_data=None):
-    filter_main = and_()
-    if all(v is not None for v in [attribute, filter_name, filter_data]):
-        if check_filter_data(filter_name, filter_data):
-            value = filter_data[filter_name]['value']
-            operator = filter_data[filter_name]['operator']
-
-            if value:
-                filter_main = and_(
-                    filter_main,
-                    attribute.ilike(check_like_exact_filter_operator(
-                        operator, value
-                    ))
-                )
-    else:
-        pass
-    return filter_main
-
-
 # def filter_data_by_both_date_and_value(
 #         filter_name=None, filter_date_from=None, filter_date_to=None,
 #         attribute=None, filter_data=None, filter_value_from=None,

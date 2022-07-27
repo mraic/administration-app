@@ -15,6 +15,10 @@ class Status:
         return cls(400, 'Category already exists')
 
     @classmethod
+    def category_already_exists(cls):
+        return cls(400, "Category already exists")
+
+    @classmethod
     def category_has_no_name(cls):
         return cls(400, "You need to provide category name")
 

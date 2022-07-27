@@ -21,10 +21,11 @@ class SubcategoryQuery(BaseQueryMixin, db.Query):
             db.session.rollback()
             raise e
 
-    def check_if_subcategory_exists(self, name):
+    def check_if_subcategory_exists(self, name, _id):
         try:
             return self.filter(
-                Subcategory.name == name
+                Subcategory.name == name,
+                Subcategory.id != _id
             ).first() is not None
         except Exception as e:
             db.session.rollback()

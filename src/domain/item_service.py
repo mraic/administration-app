@@ -90,7 +90,7 @@ class ItemService:
 
         return Status.successfully_processed()
 
-    def activate(self, _id):
+    def activate(self):
 
         data = ItemService.get_one_by_id(_id=self.item.id)
 
@@ -112,7 +112,7 @@ class ItemService:
 
         return Status.successfully_processed()
 
-    def deactivate(self, _id):
+    def deactivate(self):
 
         data = ItemService.get_one_by_id(_id=self.item.id)
 

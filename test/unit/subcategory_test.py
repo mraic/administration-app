@@ -56,6 +56,14 @@ class TestSubcategoryServices:
         mock_check_subcategory.return_value = \
             SubcategoryService(subcategory=data)
 
+        mock_check_subcategory_if_exists = mocker.patch(
+            "src.domain.subcategory_service.SubcategoryService."
+            "check_if_subcategory_exists", autospec=True
+        )
+
+        mock_check_subcategory_if_exists.return_value = \
+            SubcategoryService(subcategory=False)
+
         subcategory_domain = \
             SubcategoryService(subcategory=self.dummy_subcategory)
 
@@ -72,6 +80,14 @@ class TestSubcategoryServices:
 
         mock_check_subcategory.return_value = \
             SubcategoryService(subcategory=None)
+
+        mock_check_if_subcategory_exists = mocker.patch(
+            "src.domain.subcategory_service.SubcategoryService."
+            "check_if_subcategory_exists", autospec=True
+        )
+
+        mock_check_if_subcategory_exists.return_value = \
+            SubcategoryService(subcategory=False)
 
         subcategory_domain = \
             SubcategoryService(subcategory=self.dummy_subcategory)
@@ -93,6 +109,14 @@ class TestSubcategoryServices:
 
         mock_check_subcategory.return_value = \
             SubcategoryService(subcategory=data)
+
+        mock_check_if_subcategory_exists = mocker.patch(
+            "src.domain.subcategory_service.SubcategoryService."
+            "check_if_subcategory_exists", autospec=True
+        )
+
+        mock_check_if_subcategory_exists.return_value = \
+            SubcategoryService(subcategory=False)
 
         subcategory_domain = \
             SubcategoryService(subcategory=self.dummy_subcategory)
@@ -116,7 +140,7 @@ class TestSubcategoryServices:
             SubcategoryService(subcategory=self.dummy_subcategory)
 
         subcategory_status = \
-            subcategory_domain.delete(_id=self.dummy_subcategory.id)
+            subcategory_domain.delete()
 
         assert subcategory_status.message == \
                Status.successfully_processed().message
@@ -134,7 +158,7 @@ class TestSubcategoryServices:
             SubcategoryService(subcategory=self.dummy_subcategory)
 
         with pytest.raises(AppLogException) as ape:
-            subcategory_domain.delete(_id=self.dummy_subcategory)
+            subcategory_domain.delete()
 
         assert ape.value.status.message == \
                Status.subcategory_doesnt_exists().message
@@ -155,7 +179,7 @@ class TestSubcategoryServices:
             SubcategoryService(subcategory=self.dummy_subcategory)
 
         with pytest.raises(AppLogException) as ape:
-            subcategory_domain.delete(_id=self.dummy_subcategory)
+            subcategory_domain.delete()
 
         assert ape.value.status.message == \
                Status.subcategory_deactivated().message
@@ -176,7 +200,7 @@ class TestSubcategoryServices:
             SubcategoryService(subcategory=self.dummy_subcategory)
 
         subcategory_status = \
-            subcategory_domain.activate(_id=self.dummy_subcategory.id)
+            subcategory_domain.activate()
 
         assert subcategory_status.message == \
                Status.successfully_processed().message
@@ -194,7 +218,7 @@ class TestSubcategoryServices:
             SubcategoryService(subcategory=self.dummy_subcategory)
 
         with pytest.raises(AppLogException) as ape:
-            subcategory_domain.activate(_id=self.dummy_subcategory.id)
+            subcategory_domain.activate()
 
         assert ape.value.status.message == \
                Status.subcategory_doesnt_exists().message
@@ -215,7 +239,7 @@ class TestSubcategoryServices:
             SubcategoryService(subcategory=self.dummy_subcategory)
 
         with pytest.raises(AppLogException) as ape:
-            subcategory_domain.activate(_id=self.dummy_subcategory.id)
+            subcategory_domain.activate()
 
         assert ape.value.status.message == \
                Status.subcategory_deactivated().message
@@ -237,7 +261,7 @@ class TestSubcategoryServices:
             SubcategoryService(subcategory=self.dummy_subcategory)
 
         with pytest.raises(AppLogException) as ape:
-            subcategory_domain.activate(_id=data.id)
+            subcategory_domain.activate()
 
         assert ape.value.status.message == \
                Status.subcategory_activated().message
@@ -258,7 +282,7 @@ class TestSubcategoryServices:
             SubcategoryService(subcategory=self.dummy_subcategory)
 
         subcategory_status = \
-            subcategory_domain.deactivate(_id=self.dummy_subcategory.id)
+            subcategory_domain.deactivate()
 
         assert subcategory_status.message == \
                Status.successfully_processed().message
@@ -276,7 +300,7 @@ class TestSubcategoryServices:
             SubcategoryService(subcategory=self.dummy_subcategory)
 
         with pytest.raises(AppLogException) as ape:
-            subcategory_domain.deactivate(_id=self.dummy_subcategory.id)
+            subcategory_domain.deactivate()
 
         assert ape.value.status.message == \
                Status.subcategory_doesnt_exists().message
@@ -297,7 +321,7 @@ class TestSubcategoryServices:
             SubcategoryService(subcategory=self.dummy_subcategory)
 
         with pytest.raises(AppLogException) as ape:
-            subcategory_domain.deactivate(_id=data.id)
+            subcategory_domain.deactivate()
 
         assert ape.value.status.message == \
                Status.subcategory_deactivated().message

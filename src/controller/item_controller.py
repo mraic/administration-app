@@ -53,7 +53,7 @@ def alter_item(item_id, **kwargs):
 @marshal_with(message_response_schema, 400, apply=True)
 def activate_item(item_id):
     item_service = ItemService(item=Item(id=item_id))
-    status = item_service.activate(_id=item_id)
+    status = item_service.activate()
 
     return dict(message=status.message, data=item_service.item)
 
@@ -64,7 +64,7 @@ def activate_item(item_id):
 @marshal_with(message_response_schema, 400, apply=True)
 def deactivate_item(item_id):
     item_service = ItemService(item=Item(id=item_id))
-    status = item_service.deactivate(_id=item_id)
+    status = item_service.deactivate()
 
     return dict(message=status.message, data=item_service.item)
 

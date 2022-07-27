@@ -126,7 +126,7 @@ class TestItemServices:
 
         item_domain = ItemService(item=self.dummy_item)
 
-        item_service = item_domain.activate(_id=data.id)
+        item_service = item_domain.activate()
 
         assert item_service.message == Status.successfully_processed().message
 
@@ -141,7 +141,7 @@ class TestItemServices:
         item_domain = ItemService(item=self.dummy_item)
 
         with pytest.raises(AppLogException) as ape:
-            item_domain.activate(_id=None)
+            item_domain.activate()
 
         assert ape.value.status.message == Status.item_does_not_exists().message
 
@@ -159,7 +159,7 @@ class TestItemServices:
         item_domain = ItemService(item=self.dummy_item)
 
         with pytest.raises(AppLogException) as ape:
-            item_domain.activate(_id=data.id)
+            item_domain.activate()
 
         assert ape.value.status.message == Status.item_is_not_activated().message
 
@@ -178,7 +178,7 @@ class TestItemServices:
         item_domain = ItemService(item=self.dummy_item)
 
         with pytest.raises(AppLogException) as ape:
-            item_domain.activate(_id=data.id)
+            item_domain.activate()
 
         assert ape.value.status.message == \
                Status.item_already_activated().message
@@ -196,7 +196,7 @@ class TestItemServices:
 
         item_domain = ItemService(item=self.dummy_item)
 
-        item_service = item_domain.deactivate(_id=data.id)
+        item_service = item_domain.deactivate()
 
         assert item_service.message == Status.successfully_processed().message
 
@@ -211,7 +211,7 @@ class TestItemServices:
         item_domain = ItemService(item=self.dummy_item)
 
         with pytest.raises(AppLogException) as ape:
-            item_domain.deactivate(_id=None)
+            item_domain.deactivate()
 
         assert ape.value.status.message == Status.item_does_not_exists().message
 
@@ -229,7 +229,7 @@ class TestItemServices:
         item_domain = ItemService(item=self.dummy_item)
 
         with pytest.raises(AppLogException) as ape:
-            item_domain.activate(_id=data.id)
+            item_domain.activate()
 
         assert ape.value.status.message == \
                Status.item_is_not_activated().message

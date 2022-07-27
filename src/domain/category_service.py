@@ -9,38 +9,10 @@ class CategoryService:
     def __init__(self, category=Category()):
         self.category = category
 
-    @staticmethod
-    def get(_id):
-
-        data = CategoryService.get_one_by_id(_id=_id)
-        if data.category is not None:
-            return Category.query.get_one_by_id(
-                _id=_id)
-        else:
-            return AppLogException(Status.category_does_not_exists())
-
     def create(self):
-
-        from pathlib import Path
-
-        if self.category.name == '':
-            raise AppLogException(Status.category_has_no_name())
-
-        name_ = self.category.name.split()
-
-        if len(name_) > 1:
-            self.category.name = "-".join(name_).lower()
 
         if CategoryService.check_if_name_exists(name=self.category.name):
             raise AppLogException(Status.category_exists())
-
-        self.category.category_icon = \
-            "/static/category_icon/{}".format(self.category.name)
-
-        Path('static/category_icon/' + str(
-            self.category.id)).mkdir(parents=True, exist_ok=True)
-        self.category.category_icon = 'static/category_icon/' + str(
-            self.category.id) + '/'
 
         self.category.add()
         self.category.commit_or_rollback()
@@ -50,21 +22,21 @@ class CategoryService:
 
         data = CategoryService.get_one_by_id(_id=self.category.id)
 
+        data_exists = CategoryService.check_if_category_exists(
+            name=self.category.name,
+            _id=self.category.id
+        )
+
+        if data_exists is True:
+            raise AppLogException(Status.category_already_exists())
+
         if data.category is None:
             raise AppLogException(Status.category_does_not_exists())
 
         if data.category.status == Category.STATUSES.inactive:
             raise AppLogException(Status.category_is_not_activated())
 
-        ime = self.category.name.split()
-
-        if len(ime) > 1:
-            self.category.name = "-".join(ime).lower()
-
-        data.category.category_icon = \
-            self.category.category_icon = \
-            "/static/category_icon/{}".format(self.category.name)
-
+        data.category.category_icon = self.category.category_icon
         data.category.name = self.category.name
         data.category.update()
         data.category.commit_or_rollback()
@@ -73,7 +45,7 @@ class CategoryService:
 
         return Status.successfully_processed()
 
-    def delete(self, _id):
+    def delete(self):
 
         data = CategoryService.get_one_by_id(_id=self.category.id)
 
@@ -85,14 +57,14 @@ class CategoryService:
 
         data.category.status = Category.STATUSES.inactive
 
-        self.category = data.category
-
         data.category.update()
         data.category.commit_or_rollback()
 
+        self.category = data.category
+
         return Status.successfully_processed()
 
-    def activate(self, _id):
+    def activate(self):
 
         data = CategoryService.get_one_by_id(_id=self.category.id)
 
@@ -107,14 +79,14 @@ class CategoryService:
 
         data.category.state = Category.STATES.active
 
-        self.category = data.category
-
         data.category.update()
         data.category.commit_or_rollback()
 
+        self.category = data.category
+
         return Status.successfully_processed()
 
-    def deactivate(self, _id):
+    def deactivate(self):
 
         data = CategoryService.get_one_by_id(_id=self.category.id)
 
@@ -146,6 +118,10 @@ class CategoryService:
         return Category.query.check_if_name_exists(name=name)
 
     @staticmethod
+    def check_if_category_exists(name, _id):
+        return Category.query.check_if_category_exists(name=name, _id=_id)
+
+    @staticmethod
     def get_all_categories(filter_data, paginate_data):
         filter_main = and_()
         if filter_data is not None:
@@ -153,10 +129,6 @@ class CategoryService:
                 filter_main,
                 filter_data_result_with_operator(
                     'name', Category.name,
-                    filter_data
-                ),
-                filter_data_result_with_operator(
-                    'id', Category.id,
                     filter_data
                 )
             )

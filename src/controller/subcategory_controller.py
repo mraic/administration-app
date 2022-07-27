@@ -70,7 +70,7 @@ def delete_subcategory(subcategory_id):
         subcategory=Subcategory(id=subcategory_id)
     )
 
-    status = subcategory_service.delete(_id=subcategory_id)
+    status = subcategory_service.delete()
 
     return dict(message=status.message, data=subcategory_service.subcategory)
 
@@ -82,7 +82,7 @@ def delete_subcategory(subcategory_id):
 def activate_subcategory(subcategory_id):
     subcategory_service = SubcategoryService(
         subcategory=Subcategory(id=subcategory_id))
-    status = subcategory_service.activate(_id=subcategory_id)
+    status = subcategory_service.activate()
 
     return dict(message=status.message, data=subcategory_service.subcategory)
 
@@ -94,7 +94,7 @@ def activate_subcategory(subcategory_id):
 def deactivate_subcategory(subcategory_id):
     subcategory_service = SubcategoryService(
         subcategory=Subcategory(id=subcategory_id))
-    status = subcategory_service.deactivate(_id=subcategory_id)
+    status = subcategory_service.deactivate()
 
     return dict(message=status.message, data=subcategory_service.subcategory)
 

@@ -2,7 +2,7 @@ import enum
 from uuid import uuid4
 
 import sqlalchemy as sa
-from sqlalchemy import orm, or_
+from sqlalchemy import orm
 from sqlalchemy.dialects.postgresql import UUID
 
 from src import db
@@ -56,10 +56,18 @@ class CategoryQuery(BaseModelMixin, db.Query):
         try:
             return self.filter(
                 Category.status == Category.STATUSES.active,
-                or_(
-                    Category.name.ilike('%' + search + '%')
-                )
+                Category.name.ilike('%' + search + '%')
             ).all()
+        except Exception as e:
+            db.session.rollback()
+            raise e
+
+    def check_if_category_exists(self, name, _id):
+        try:
+            return self.filter(
+                Category.name == name,
+                Category.id != _id
+            ).first() is not None
         except Exception as e:
             db.session.rollback()
             raise e

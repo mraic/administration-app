@@ -9,7 +9,7 @@ from ..views import BaseSchema
 class CategorySchema(BaseSchema):
     id = fields.UUID(dump_only=True)
     name = fields.Str(required=True, validate=Length(min=5, max=30))
-    category_icon = fields.Str()
+    category_icon = fields.Str(required=True)
     state = EnumField(Category.STATES, by_value=True, dump_only=True)
     status = EnumField(Category.STATUSES, by_value=True, dump_only=True)
     created_at = fields.DateTime(dump_only=True)

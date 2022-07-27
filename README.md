@@ -21,8 +21,3 @@ TODO: Describe and show how to build your code and run the tests.
 
 TODO: Explain how other users and developers can contribute to make your code
 better.
-
-# administration-app
-
-# servisi za preostale modele
-# pytest servisa 

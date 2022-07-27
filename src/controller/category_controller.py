@@ -16,9 +16,8 @@ from src.views.message_schema import message_response_schema
 @marshal_with(message_response_schema, 400, apply=True)
 def get_categories(category_id):
     category_service = CategoryService.get_one_by_id(_id=category_id)
-    category_service.get(_id=category_id)
-    return (dict(data=category_service.category,
-                 message=Status.successfully_processed().message))
+    return dict(data=category_service.category,
+                 message=Status.successfully_processed().message)
 
 
 @doc(description='Create category route', tags=['Category'])
@@ -29,7 +28,8 @@ def get_categories(category_id):
 def create_category(**kwargs):
     category_service = CategoryService(
         category=Category(
-            name=kwargs.get('name').strip()
+            name=kwargs.get('name'),
+            category_icon=kwargs.get('category_icon')
         )
     )
 
@@ -48,6 +48,7 @@ def alter_category(category_id, **kwargs):
         category=Category(
             id=category_id,
             name=kwargs.get('name'),
+            category_icon=kwargs.get('category_icon')
         )
     )
 
@@ -62,7 +63,7 @@ def alter_category(category_id, **kwargs):
 @marshal_with(message_response_schema, 400, apply=True)
 def delete_category(category_id):
     category_service = CategoryService(category=Category(id=category_id))
-    status = category_service.delete(_id=category_id)
+    status = category_service.delete()
 
     return dict(message=status.message, data=category_service.category)
 
@@ -73,7 +74,7 @@ def delete_category(category_id):
 @marshal_with(message_response_schema, 400, apply=True)
 def activate_category(category_id):
     category_service = CategoryService(category=Category(id=category_id))
-    status = category_service.activate(_id=category_id)
+    status = category_service.activate()
 
     return dict(message=status.message, data=category_service.category)
 
@@ -84,7 +85,7 @@ def activate_category(category_id):
 @marshal_with(message_response_schema, 400, apply=True)
 def deactivate_category(category_id):
     category_service = CategoryService(category=Category(id=category_id))
-    status = category_service.deactivate(_id=category_id)
+    status = category_service.deactivate()
 
     return dict(message=status.message, data=category_service.category)
 

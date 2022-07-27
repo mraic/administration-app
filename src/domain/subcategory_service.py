@@ -22,7 +22,7 @@ class SubcategoryService:
     def create(self):
 
         if SubcategoryService.check_if_subcategory_exists(
-                name=self.subcategory.name):
+                name=self.subcategory.name, _id=self.subcategory.id):
             raise AppLogException(Status.subcategory_exists())
 
         self.subcategory.add()
@@ -33,6 +33,14 @@ class SubcategoryService:
     def alter(self):
 
         data = SubcategoryService.get_one_by_id(_id=self.subcategory.id)
+
+        data_subcategory = SubcategoryService.check_if_subcategory_exists(
+            name=self.subcategory.name,
+            _id=self.subcategory.id
+        )
+
+        if data_subcategory is True:
+            raise AppLogException(Status.subcategory_exists())
 
         if data.subcategory is None:
             raise AppLogException(Status.subcategory_doesnt_exists())
@@ -46,19 +54,19 @@ class SubcategoryService:
         data_category = \
             CategoryService.get_one_by_id(_id=self.subcategory.category_id)
 
-        if data_category is not None:
+        if data_category.category is not None:
             data.subcategory.category_id = self.subcategory.category_id
         else:
             raise AppLogException(Status.category_does_not_exists())
 
-        self.subcategory = data.subcategory
-
         data.subcategory.update()
         data.subcategory.commit_or_rollback()
 
+        self.subcategory = data.subcategory
+
         return Status.successfully_processed()
 
-    def delete(self, _id):
+    def delete(self):
 
         data = SubcategoryService.get_one_by_id(_id=self.subcategory.id)
 
@@ -70,14 +78,14 @@ class SubcategoryService:
 
         data.subcategory.status = Subcategory.STATUSES.inactive
 
-        self.subcategory = data.subcategory
-
         data.subcategory.update()
         data.subcategory.commit_or_rollback()
 
+        self.subcategory = data.subcategory
+
         return Status.successfully_processed()
 
-    def activate(self, _id):
+    def activate(self):
 
         data = SubcategoryService.get_one_by_id(_id=self.subcategory.id)
 
@@ -92,14 +100,14 @@ class SubcategoryService:
 
         data.subcategory.state = Subcategory.STATES.active
 
-        self.subcategory = data.subcategory
-
         data.subcategory.update()
         data.subcategory.commit_or_rollback()
 
+        self.subcategory = data.subcategory
+
         return Status.successfully_processed()
 
-    def deactivate(self, _id):
+    def deactivate(self):
 
         data = SubcategoryService.get_one_by_id(_id=self.subcategory.id)
 
@@ -111,10 +119,10 @@ class SubcategoryService:
 
         data.subcategory.state = Subcategory.STATES.inactive
 
-        self.subcategory = data.subcategory
-
         data.subcategory.update()
         data.subcategory.commit_or_rollback()
+
+        self.subcategory = data.subcategory
 
         return Status.successfully_processed()
 
@@ -157,5 +165,5 @@ class SubcategoryService:
         return cls(subcategory=Subcategory.query.get_one_by_id(_id=_id))
 
     @staticmethod
-    def check_if_subcategory_exists(name):
-        return Subcategory.query.check_if_subcategory_exists(name=name)
+    def check_if_subcategory_exists(name, _id):
+        return Subcategory.query.check_if_subcategory_exists(name=name, _id=_id)
