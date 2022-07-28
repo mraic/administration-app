@@ -1,1 +1,1 @@
-docker container exec -it administration_app_development bach -c "ENV_NAME='development' py.test"
+docker exec -it administration_app_development bash -c "ENV_NAME='development' py.test"

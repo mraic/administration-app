@@ -34,29 +34,11 @@ class TestItemController:
         assert 'message' in response_data
         assert 'errors' in response_data
 
-    @pytest.mark.run(order=3)
-    def test_get_item(self, client):
-        response_data = json.loads(self.create_item.data)
-
-        response = client.get(
-            "/items/{}".format(response_data['data']['id']),
-            headers={
-                "Content-Type": "multipart/form-data"
-            }
-        )
-
-        get_response_data = json.loads(response.data)
-        assert 'data' in get_response_data
-        assert 'message' in get_response_data
-        assert response_data['message'] == \
-               Status.successfully_processed().message
-
     @pytest.mark.run(order=4)
     def test_activate_item(self, client):
-        response_data = json.loads(self.create_item.data)
+        from src import db, Item
 
-        from src import db
-        from src import Item
+        response_data = json.loads(self.create_item.data)
 
         x = db.session.query(Item).filter(
             Item.id == response_data['data']['id']).first()

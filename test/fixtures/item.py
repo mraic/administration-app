@@ -1,3 +1,5 @@
+import json
+
 import pytest
 from faker import Faker
 
@@ -19,16 +21,16 @@ def dummy_item(request):
 
 
 @pytest.fixture(scope="class")
-def create_item(client, dummy_item, request):
-
+def create_item(client, create_subcategory, dummy_item, request):
+    create_subcategory_data = json.loads(create_subcategory.data)
     json_data = {
         "name": dummy_item.name,
         "description": dummy_item.description,
         "price": dummy_item.price,
-        "condition_id": '765cb93b-2656-46ce-8ecf-c53ba9cd84e4',
-        "subcategory_id": '4c4e8715-7516-4a95-b8b9-13e6956101be',
+        "condition_id": '737da853-e96a-4f38-8be8-37f7c1c2c0c9',
+        "subcategory_id": create_subcategory_data['data']['id'],
+        "file": None
     }
-
     response = client.post(
         "/items",
         data=json_data,
@@ -36,5 +38,6 @@ def create_item(client, dummy_item, request):
             "Content-Type": 'multipart/form-data'
         }
     )
-
     request.cls.create_item = response
+
+    return request.cls.create_item

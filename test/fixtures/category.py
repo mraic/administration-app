@@ -33,5 +33,6 @@ def create_category( client, dummy_category, request):
             "Content-Type": "application/json"
         }
     )
-
     request.cls.create_category = response
+
+    return request.cls.create_category

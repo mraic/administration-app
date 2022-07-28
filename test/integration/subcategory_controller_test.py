@@ -2,6 +2,7 @@ import json
 
 import pytest
 
+from src.domain import SubcategoryService
 from src.general import Status
 
 
@@ -60,13 +61,22 @@ class TestCategoryController:
         assert response.status_code == 200
 
     @pytest.mark.run(order=3)
-    def test_alter_subcategory(self, client):
+    def test_alter_subcategory(self, client, mocker):
         response_data = json.loads(self.create_subcategory.data)
+
+        mock_subcategory_exists = mocker.patch(
+            "src.domain.subcategory_service.SubcategoryService."
+            "check_if_subcategory_exists", autospec=True
+        )
+        mock_subcategory_exists.return_value = SubcategoryService(
+            subcategory=False
+        )
 
         json_data = {
             "name": response_data['data']['name'],
             "subcategory_icon": response_data['data']['subcategory_icon'],
-            "category_id": response_data['data']['category_id']
+            "category_id": response_data['data']['category_id'],
+
         }
 
         response = client.put(

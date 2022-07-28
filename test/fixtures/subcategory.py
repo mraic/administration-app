@@ -1,3 +1,5 @@
+import json
+
 import pytest
 from faker import Faker
 
@@ -19,11 +21,13 @@ def dummy_subcategory(request):
 
 @pytest.fixture(scope="class")
 @pytest.mark.usefixtures('dummy_category')
-def create_subcategory(client, dummy_subcategory, dummy_category, request):
+def create_subcategory(
+        client, create_category, dummy_subcategory, dummy_category, request):
+    create_category_data = json.loads(create_category.data)
     json_data = {
         "name": dummy_subcategory.name,
         "subcategory_icon": dummy_subcategory.subcategory_icon,
-        "category_id": "00c61aee-17a8-4a0f-be98-1253ccd01f30"
+        "category_id": create_category_data['data']['id']
     }
 
     response = client.post(
@@ -33,5 +37,6 @@ def create_subcategory(client, dummy_subcategory, dummy_category, request):
             "Content-Type": "application/json"
         }
     )
-
     request.cls.create_subcategory = response
+
+    return request.cls.create_subcategory

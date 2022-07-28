@@ -31,6 +31,7 @@ def regular_data():
     list_1.commit_or_rollback()
 
     list_item_1 = ListItem(
+        id='737da853-e96a-4f38-8be8-37f7c1c2c0c9',
         name="Novo",
         description="Novo",
         list_id=list_1.id
