@@ -2,7 +2,7 @@ import enum
 from uuid import uuid4
 
 import sqlalchemy as sa
-from sqlalchemy import orm
+from sqlalchemy import orm, func, and_
 from sqlalchemy.dialects.postgresql import UUID
 
 from src import db
@@ -33,6 +33,30 @@ class CategoryQuery(BaseModelMixin, db.Query):
             return self.filter(
                 Category.name == name,
             ).first() is not None
+        except Exception as e:
+            db.session.rollback()
+            raise e
+
+    @staticmethod
+    def count_subcategories():
+        from src import Subcategory
+        try:
+            subquery = db.session.query(
+                Subcategory.category_id,
+                func.count(Subcategory.id).label('total')
+            ).filter(
+                    Subcategory.status == Subcategory.STATUSES.active
+            ).group_by(
+                Subcategory.category_id,
+            ).subquery()
+
+            return db.session.query(
+                Category, subquery
+            ).join(
+                subquery,
+                Category.id == subquery.c.category_id,
+                isouter=True
+            ).order_by(Category.created_at.desc()).all()
         except Exception as e:
             db.session.rollback()
             raise e

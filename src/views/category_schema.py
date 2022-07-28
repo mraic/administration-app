@@ -73,6 +73,16 @@ class CategoryResponseFullSchema(BaseSchema):
     message = fields.String(dump_only=True)
 
 
+class CategoryResponseSubcategoryCount(CategorySchema):
+    total = fields.Int(dump_only=True)
+
+
+class FullCategoryResponseSubcategoryCount(BaseSchema):
+    data = fields.Nested("CategoryResponseSubcategoryCount", many=True,
+                         dump_only=True)
+    message = fields.String(dump_only=True)
+
+
 category_schema = CategorySchema()
 category_response_one_schema = CategoryResponseSchema()
 update_category_schema = UpdateCategorySchema()
@@ -82,3 +92,5 @@ get_all_category_data = GetAllCategoryPaginateSchema()
 auto_complete_schema = AutoCompleteSchema()
 response_category_many_schema = ResponseCategoryManySchema()
 category_response_full_schema = CategoryResponseFullSchema()
+category_response_subcategory_count = CategoryResponseSubcategoryCount()
+full_category_response_subcategory_count = FullCategoryResponseSubcategoryCount()

@@ -1,5 +1,5 @@
 from pathlib import Path
-
+from src.domain import ListItemService
 from sqlalchemy import and_
 
 from src import Item, AppLogException, Gallery, db
@@ -7,6 +7,7 @@ from src.domain import SubcategoryService
 from src.general import Status, filter_data_result_with_operator, \
     filter_data_result_between_two_dates, filter_data_result_between_two_value, \
     import_file
+from src.domain import GalleryService
 
 
 class ItemService:
@@ -24,8 +25,6 @@ class ItemService:
             raise AppLogException(Status.item_does_not_exists())
 
     def create(self):
-        from src.domain import ListItemService
-
         data = SubcategoryService.get_one_by_id(_id=self.item.subcategory_id)
 
         if data.subcategory is None:
@@ -43,9 +42,6 @@ class ItemService:
         return Status.successfully_processed()
 
     def alter(self):
-
-        from src.domain import ListItemService
-
         data = ItemService.get_one_by_id(_id=self.item.id)
 
         if data.item is None:
@@ -72,7 +68,6 @@ class ItemService:
         return Status.successfully_processed()
 
     def delete(self):
-
         data = ItemService.get_one_by_id(_id=self.item.id)
 
         if data.item is None:
@@ -82,16 +77,14 @@ class ItemService:
             raise AppLogException(Status.item_is_not_activated())
 
         data.item.status = Item.STATUSES.inactive
-
-        self.item = data.item
-
         data.item.update()
         data.item.commit_or_rollback()
+
+        self.item = data.item
 
         return Status.successfully_processed()
 
     def activate(self):
-
         data = ItemService.get_one_by_id(_id=self.item.id)
 
         if data.item is None:
@@ -104,16 +97,14 @@ class ItemService:
             raise AppLogException(Status.item_already_activated())
 
         data.item.state = Item.STATES.active
-
-        self.item = data.item
-
         data.item.update()
         data.item.commit_or_rollback()
+
+        self.item = data.item
 
         return Status.successfully_processed()
 
     def deactivate(self):
-
         data = ItemService.get_one_by_id(_id=self.item.id)
 
         if data.item is None:
@@ -123,11 +114,10 @@ class ItemService:
             raise AppLogException(Status.item_is_not_activated())
 
         data.item.state = Item.STATES.inactive
-
-        self.item = data.item
-
         data.item.update()
         data.item.commit_or_rollback()
+
+        self.item = data.item
 
         return Status.successfully_processed()
 
@@ -181,7 +171,7 @@ class ItemService:
 
     @staticmethod
     def create_with_gallery(params, file):
-        from src.domain import GalleryService
+
         try:
             item_service = ItemService(
                 item=Item(
@@ -218,7 +208,6 @@ class ItemService:
 
     @staticmethod
     def alter_with_gallery(_id, params, file):
-        from src.domain import GalleryService
         try:
             item_service = ItemService(
                 item=Item(

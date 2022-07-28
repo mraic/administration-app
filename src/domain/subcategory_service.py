@@ -31,16 +31,7 @@ class SubcategoryService:
         return Status.successfully_processed()
 
     def alter(self):
-
         data = SubcategoryService.get_one_by_id(_id=self.subcategory.id)
-
-        data_subcategory = SubcategoryService.check_if_subcategory_exists(
-            name=self.subcategory.name,
-            _id=self.subcategory.id
-        )
-
-        if data_subcategory is True:
-            raise AppLogException(Status.subcategory_exists())
 
         if data.subcategory is None:
             raise AppLogException(Status.subcategory_doesnt_exists())
@@ -48,17 +39,19 @@ class SubcategoryService:
         if data.subcategory.status == Subcategory.STATUSES.inactive:
             raise AppLogException(Status.subcategory_not_activated())
 
-        data.subcategory.name = self.subcategory.name
-        data.subcategory.subcategory_icon = self.subcategory.subcategory_icon
+        if SubcategoryService.check_if_subcategory_exists(
+                name=self.subcategory.name, _id=self.subcategory.id):
+            raise AppLogException(Status.subcategory_exists())
 
         data_category = \
             CategoryService.get_one_by_id(_id=self.subcategory.category_id)
 
-        if data_category.category is not None:
-            data.subcategory.category_id = self.subcategory.category_id
-        else:
+        if data_category.category is None:
             raise AppLogException(Status.category_does_not_exists())
 
+        data.subcategory.name = self.subcategory.name
+        data.subcategory.subcategory_icon = self.subcategory.subcategory_icon
+        data.subcategory.category_id = self.subcategory.category_id
         data.subcategory.update()
         data.subcategory.commit_or_rollback()
 

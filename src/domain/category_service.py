@@ -2,12 +2,20 @@ from sqlalchemy import and_
 
 from src import Category, AppLogException
 from src.general import Status, filter_data_result_with_operator
+from src.views import CategorySchema
 
 
 class CategoryService:
 
     def __init__(self, category=Category()):
         self.category = category
+
+    def get(self):
+
+        data = CategoryService.get_one_by_id(_id=self.category.id)
+
+        if data.category is None:
+            raise AppLogException(Status.category_does_not_exists())
 
     def create(self):
 
@@ -19,22 +27,16 @@ class CategoryService:
         return Status.successfully_processed()
 
     def alter(self):
-
         data = CategoryService.get_one_by_id(_id=self.category.id)
-
-        data_exists = CategoryService.check_if_category_exists(
-            name=self.category.name,
-            _id=self.category.id
-        )
-
-        if data_exists is True:
-            raise AppLogException(Status.category_already_exists())
-
         if data.category is None:
             raise AppLogException(Status.category_does_not_exists())
 
         if data.category.status == Category.STATUSES.inactive:
             raise AppLogException(Status.category_is_not_activated())
+
+        if CategoryService.check_if_category_exists(
+                name=self.category.name, _id=self.category.id):
+            raise AppLogException(Status.category_already_exists())
 
         data.category.category_icon = self.category.category_icon
         data.category.name = self.category.name
@@ -108,6 +110,31 @@ class CategoryService:
     @classmethod
     def get_one_by_id(cls, _id):
         return cls(category=Category.query.get_one_by_id(_id=_id))
+
+    @staticmethod
+    def count_subcategories():
+        data = Category.query.count_subcategories()
+
+        list_data = []
+        schema = CategorySchema()
+        for i in data.category or []:
+            current_dict = schema.dump(i.Category)
+            current_dict['total'] = i.total or 0
+            list_data.append(current_dict)
+
+        return list_data, data.total, Status.successfully_processed()
+
+    @staticmethod
+    def get_one_by_id_with_check(_id):
+        category_service = CategoryService.get_one_by_id(_id=_id)
+
+        if category_service.category is None:
+            raise AppLogException(Status.category_does_not_exists())
+
+        if category_service.category.status == Category.STATUSES.inactive:
+            raise AppLogException(Status.category_does_not_exists())
+
+        return category_service, Status.successfully_processed()
 
     @staticmethod
     def get_one_by_name(name):

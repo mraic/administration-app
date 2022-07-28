@@ -10,6 +10,14 @@ from src.views.subcategory_schema import response_one_subcategory_schema, \
     request_subcategory_filter_schema, get_all_subcategory_data
 
 
+@doc(description='Get all items for subcategory', tags=['Subcategory'])
+@bpp.get('/subcategory/get/<uuid:category_id>')
+@marshal_with()
+@marshal_with(message_response_schema, 400, apply =True)
+def get_items_in_sub(category_id):
+
+
+
 @doc(description="Get subcategory route", tags=['Subcategory'])
 @bpp.get('/subcategory/<uuid:subcategory_id>')
 @marshal_with(response_one_subcategory_schema, 200, apply=True)
@@ -99,7 +107,7 @@ def deactivate_subcategory(subcategory_id):
     return dict(message=status.message, data=subcategory_service.subcategory)
 
 
-@doc(description='Paginate category route', tags=['Subcategory'])
+@doc(description='Paginate subcategory route', tags=['Subcategory'])
 @bpp.post('/subcategory/paginate')
 @use_kwargs(request_subcategory_filter_schema, apply=True)
 @marshal_with(get_all_subcategory_data, 200, apply=True)

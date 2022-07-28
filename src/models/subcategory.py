@@ -2,7 +2,7 @@ import enum
 from uuid import uuid4
 
 import sqlalchemy as sa
-from sqlalchemy import orm
+from sqlalchemy import orm, func
 from sqlalchemy.dialects.postgresql import UUID
 
 from .common import BaseModelMixin, ModelsMixin
@@ -46,6 +46,9 @@ class SubcategoryQuery(BaseQueryMixin, db.Query):
             db.session.rollback()
             raise e
 
+    @staticmethod
+    def get_all_items_per_subcategory(category_id):
+        pass
 
 class SubcategoryStatus(enum.Enum):
     inactive = 0
