@@ -12,12 +12,12 @@ from src.views.message_schema import message_response_schema
 
 @doc(description='Get all subcategory for category', tags=['Category'])
 @bpp.get('/categories/get')
-@marshal_with(full_category_response_subcategory_count, 200, apply=True)
+@marshal_with(full_category_response_subcategory_count, 200, apply=False)
 @marshal_with(message_response_schema, 400, apply=True)
 def get_categories_count():
-    total, status = CategoryService.count_subcategories()
+    data, status = CategoryService.count_subcategories()
 
-    return dict(data=total, status=status.message)
+    return dict(data=data, message=status.message)
 
 
 @doc(description='Get category route', tags=['Category'])

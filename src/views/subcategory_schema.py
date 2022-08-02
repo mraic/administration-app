@@ -3,7 +3,7 @@ from marshmallow.validate import Length
 from marshmallow_enum import EnumField
 
 from src import Subcategory
-from src.views import BaseSchema
+from src.views import BaseSchema, Hellper
 
 
 class SubcategorySchema(BaseSchema):
@@ -61,6 +61,19 @@ class ResponseSubcategoryManySchema(BaseSchema):
     message = fields.String(dump_only=True)
 
 
+class FullSubcategoryResponseItemsCount(SubcategorySchema):
+    class Meta:
+        exclude = ('items',)
+
+    total = fields.Int(dump_only=True)
+
+
+class GetAllCount(BaseSchema):
+    data = fields.Nested("FullSubcategoryResponseItemsCount", many=True,
+                         dump_only=True)
+    message = fields.String(dump_only=True)
+
+
 create_subcategory = SubcategorySchema()
 response_one_subcategory_schema = ResponseOneSubcategorySchema()
 update_subcategory_schema = UpdateSubcategorySchema()
@@ -68,3 +81,5 @@ request_subcategory_filter_schema = SubcategoryFilterRequestSchema()
 get_all_subcategory_data = GetAllSubcategoryPaginateSchema()
 auto_complete_schema = AutoCompleteSchema()
 response_subcategory_many_schema = ResponseSubcategoryManySchema()
+full_subcategory_response_items_count = FullSubcategoryResponseItemsCount()
+get_all_count = GetAllCount()

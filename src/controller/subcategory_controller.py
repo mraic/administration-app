@@ -7,15 +7,19 @@ from src.views.message_schema import message_response_schema
 from src.views.subcategory_schema import response_one_subcategory_schema, \
     create_subcategory, update_subcategory_schema, \
     response_subcategory_many_schema, auto_complete_schema, \
-    request_subcategory_filter_schema, get_all_subcategory_data
+    request_subcategory_filter_schema, get_all_subcategory_data, \
+    get_all_count
 
 
 @doc(description='Get all items for subcategory', tags=['Subcategory'])
 @bpp.get('/subcategory/get/<uuid:category_id>')
-@marshal_with()
-@marshal_with(message_response_schema, 400, apply =True)
+@marshal_with(get_all_count, 200, apply=False)
+@marshal_with(message_response_schema, 400, apply=True)
 def get_items_in_sub(category_id):
+    data, status = SubcategoryService.get_all_items_per_subcategory(
+        category_id=category_id)
 
+    return dict(data=data, message=status.message)
 
 
 @doc(description="Get subcategory route", tags=['Subcategory'])

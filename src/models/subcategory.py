@@ -48,7 +48,34 @@ class SubcategoryQuery(BaseQueryMixin, db.Query):
 
     @staticmethod
     def get_all_items_per_subcategory(category_id):
-        pass
+        from src import Item, Category
+        try:
+            subquery = db.session.query(
+                Item.subcategory_id,
+                func.count(Item.id).label('total')
+            ).having(
+                func.count(Item.id).label('total') > 0
+            ).group_by(
+                Item.subcategory_id
+            ).subquery()
+
+
+            return db.session.query(
+                Subcategory, subquery, Category
+            ).join(
+                subquery,
+                Subcategory.id == subquery.c.subcategory_id,
+                isouter=False
+            ).join(
+                Category,
+                Category.id == Subcategory.category_id
+            ).filter(
+                Category.id == category_id
+            ).all()
+        except Exception as e:
+            db.session.rollback()
+            raise e
+
 
 class SubcategoryStatus(enum.Enum):
     inactive = 0

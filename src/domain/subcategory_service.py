@@ -3,6 +3,7 @@ from sqlalchemy import and_
 from src import Subcategory, AppLogException
 from src.domain import CategoryService
 from src.general import Status, filter_data_result_with_operator
+from src.views.subcategory_schema import SubcategorySchema
 
 
 class SubcategoryService:
@@ -160,3 +161,19 @@ class SubcategoryService:
     @staticmethod
     def check_if_subcategory_exists(name, _id):
         return Subcategory.query.check_if_subcategory_exists(name=name, _id=_id)
+
+    @staticmethod
+    def get_all_items_per_subcategory(category_id):
+
+        data = Subcategory.query.get_all_items_per_subcategory(
+            category_id=category_id)
+
+        list_data = []
+        schema = SubcategorySchema()
+        for i in data or []:
+            current_dict = schema.dump(i.Subcategory)
+            current_dict['total'] = i.total or 0
+            list_data.append(current_dict)
+
+
+        return list_data, Status.successfully_processed()

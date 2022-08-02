@@ -117,12 +117,12 @@ class CategoryService:
 
         list_data = []
         schema = CategorySchema()
-        for i in data.category or []:
+        for i in data or []:
             current_dict = schema.dump(i.Category)
             current_dict['total'] = i.total or 0
             list_data.append(current_dict)
 
-        return list_data, data.total, Status.successfully_processed()
+        return list_data, Status.successfully_processed()
 
     @staticmethod
     def get_one_by_id_with_check(_id):

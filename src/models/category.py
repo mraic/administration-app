@@ -45,7 +45,9 @@ class CategoryQuery(BaseModelMixin, db.Query):
                 Subcategory.category_id,
                 func.count(Subcategory.id).label('total')
             ).filter(
-                    Subcategory.status == Subcategory.STATUSES.active
+                Subcategory.status == Subcategory.STATUSES.active
+            ).having(
+                func.count(Subcategory.id).label('total') > 0
             ).group_by(
                 Subcategory.category_id,
             ).subquery()
@@ -55,8 +57,10 @@ class CategoryQuery(BaseModelMixin, db.Query):
             ).join(
                 subquery,
                 Category.id == subquery.c.category_id,
-                isouter=True
-            ).order_by(Category.created_at.desc()).all()
+                isouter=False
+            ).order_by(
+                Category.created_at.desc(),
+            ).all()
         except Exception as e:
             db.session.rollback()
             raise e

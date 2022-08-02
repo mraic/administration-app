@@ -2,6 +2,7 @@ from marshmallow import fields
 from marshmallow.validate import Length
 from marshmallow_enum import EnumField
 
+from . import Hellper
 from .. import Category
 from ..views import BaseSchema
 
@@ -32,7 +33,7 @@ class CategoryResponseSchema(BaseSchema):
 class ActivateCategorySchema(CategorySchema):
     class Meta:
         items = fields.Nested("BaseSchema", dump_only=True)
-        message = fields.String(dum_only=True)
+        message = fields.String(dump_only=True)
         fields = ('state', 'status')
 
 
@@ -74,6 +75,9 @@ class CategoryResponseFullSchema(BaseSchema):
 
 
 class CategoryResponseSubcategoryCount(CategorySchema):
+    class Meta:
+        exclude = ('subcategory',)
+
     total = fields.Int(dump_only=True)
 
 
